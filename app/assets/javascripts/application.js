@@ -10,6 +10,9 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
+//= require AerieWorks/core.js
 //= require JSPlayer.js
-//= require JSPlayer.Event.js
+//= require AerieWorks/Event.js
+//= require AerieWorks/Auth/core.js
+//= require AerieWorks/Auth/Google.js
 //= require_tree .
