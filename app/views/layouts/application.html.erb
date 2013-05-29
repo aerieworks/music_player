@@ -6,11 +6,14 @@
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Script-Type" content="text/javascript" />
     <meta http-equiv="Content-Language" content="en-US" />
+    <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" media="all" rel="stylesheet" type="text/css">
     <%= stylesheet_link_tag  "application", :media => "all" %>
     <%= csrf_meta_tags %>
   </head>
   <body>
     <%= yield %>
+    <script src="http://code.jquery.com/jquery-2.0.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
     <%= javascript_include_tag "application" %>
     <%= yield :javascript %>
   </body>
