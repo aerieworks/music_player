@@ -31,20 +31,20 @@
         immediate: !required
       },
       function (authResult) {
-        console.log("Google.authorze: Returned from API.");
-        console.log(authResult);
+        AW.Log.debug("Google.authorze: Returned from API.");
+        AW.Log.debug(authResult);
         if (authResult && !authResult.error) {
           authorizationState = AuthState.Authorized;
-          console.log("Google.authorize: Authorized.");
+          AW.Log.debug("Google.authorize: Authorized.");
           onAuthorized.trigger();
         } else if (required) {
           authorizationState = AuthState.Unauthorized;
-          console.log("Google.authorize: Interactive authorization failed.");
+          AW.Log.debug("Google.authorize: Interactive authorization failed.");
           onUnauthorized.trigger();
         } else {
-          console.log("Google.authorize: Immediate authorization failed.");
+          AW.Log.debug("Google.authorize: Immediate authorization failed.");
           if (requiresAuthorization) {
-            console.log("Google.authorize: Attempting interactive authorization.");
+            AW.Log.debug("Google.authorize: Attempting interactive authorization.");
             authorize(true);
           } else {
             authorizationState = AuthState.Unknown;

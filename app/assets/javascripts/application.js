@@ -11,8 +11,8 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require AerieWorks/core.js
-//= require JSPlayer.js
+//= require AerieWorks/Log.js
 //= require AerieWorks/Event.js
 //= require AerieWorks/Auth/core.js
-//= require AerieWorks/Auth/Google.js
+//= require AerieWorks/MusicPlayer/core.js
 //= require_tree .

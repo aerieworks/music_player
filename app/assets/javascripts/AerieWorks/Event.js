@@ -1,5 +1,5 @@
 "use strict";
-(function (AW, JSP, $) {
+(function (AW, $) {
   var handlerDefaults = {
     once: false
   };
@@ -51,6 +51,5 @@
     trigger: trigger
   };
 
-  JSP.event = constructor;
   AW.Event = constructor;
-})(window.AerieWorks, window.JSPlayer, window.jQuery);
+})(window.AerieWorks, window.jQuery);

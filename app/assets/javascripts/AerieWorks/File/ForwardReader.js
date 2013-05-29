@@ -1,6 +1,5 @@
-(function() {
-    "use strict";
-
+"use strict";
+(function (AW) {
     // Constructor
     function ForwardReader(view) {
         this.view = view;
@@ -49,8 +48,8 @@
         readByte: readByte,
         readBytes: readBytes,
         readSyncsafeInt: readSyncsafeInt,
-        readUint32: readUint32 
+        readUint32: readUint32
     };
 
-    JSPlayer.File.ForwardReader = ForwardReader;
-})();
+    AW.File.ForwardReader = ForwardReader;
+})(window.AerieWorks);

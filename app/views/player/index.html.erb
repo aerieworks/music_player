@@ -21,13 +21,13 @@
 
 <% content_for :javascript do %>
   <script type="text/javascript">
+"use strict";
   $(function() {
-    "use strict";
+    var MP = window.AerieWorks.MusicPlayer;
+    var playlist = new MP.Playlist();
+    var player = new MP.Player(playlist);
 
-    var playlist = new JSPlayer.playlist();
-    var player = new JSPlayer.player(playlist);
-
-    var playerView = new JSPlayer.UI.PlayerView(
+    var playerView = new MP.Ui.PlayerView(
       player,
       playlist,
       $('#positionTracker'),
@@ -37,7 +37,7 @@
       $('#btnNext'),
       $('#btnPlayPause'));
 
-    var playlistView = new JSPlayer.UI.PlaylistView(
+    var playlistView = new MP.Ui.PlaylistView(
       playlist,
       $('#playlist'),
       $('#btnSelectFiles'),
