@@ -1,2 +1,48 @@
-<h1>Player#index</h1>
-<p>Find me in app/views/player/index.html.erb</p>
+<div id="playerUI">
+  <div id="timeDisplay"></div>
+  <div id="currentFile"></div>
+  <div id="positionTracker"></div>
+  <ul id="playerControls" class="buttons">
+    <li><button type="button" id="btnPrevious">&lt;&lt;</button></li>
+    <li><button type="button" id="btnPlayPause">Play</button></li>
+    <li><button type="button" id="btnNext">&gt;&gt;</button></li>
+  </ul>
+</div>
+<ul class="buttons">
+  <li id="fileSelectorContainer">
+    <input type="file" id="fileSelector" multiple="true" accept="audio/*" />
+    <button type="button" id="btnSelectFiles">Add Files</button>
+  </li>
+  <li>
+    <button type="button" id="btnRemoveAllFiles">Remove All</button>
+  </li>
+</ul>
+<ul id="playlist" dropzone="copy f:audio/*"></ul>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+  $(function() {
+    "use strict";
+
+    var playlist = new JSPlayer.playlist();
+    var player = new JSPlayer.player(playlist);
+
+    var playerView = new JSPlayer.UI.PlayerView(
+      player,
+      playlist,
+      $('#positionTracker'),
+      $('#timeDisplay'),
+      $('#currentFile'),
+      $('#btnPrevious'),
+      $('#btnNext'),
+      $('#btnPlayPause'));
+
+    var playlistView = new JSPlayer.UI.PlaylistView(
+      playlist,
+      $('#playlist'),
+      $('#btnSelectFiles'),
+      $('#fileSelector'),
+      $('#btnRemoveAllFiles'));
+  });
+  </script>
+<% end %>
