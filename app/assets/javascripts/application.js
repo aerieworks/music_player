@@ -13,6 +13,7 @@
 //= require AerieWorks/core.js
 //= require AerieWorks/Log.js
 //= require AerieWorks/Event.js
-//= require AerieWorks/Auth/core.js
+//= require AerieWorks/OneTimeTrigger.js
+//= require AerieWorks/Google/core.js
 //= require AerieWorks/MusicPlayer/core.js
 //= require_tree .

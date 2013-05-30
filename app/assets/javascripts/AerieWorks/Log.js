@@ -13,6 +13,7 @@
     if (window.console != null && typeof window.console.log == 'function' && level <= loggingLevel) {
       if (typeof message !== 'string') {
         window.console.log(message);
+        return;
       }
 
       var now = new Date();

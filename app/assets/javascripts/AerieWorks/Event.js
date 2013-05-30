@@ -29,7 +29,7 @@
   function removeHandler(handlerId) {
     for (var i = 0; i < this.handlers.length; i++) {
       if (this.handlers[i].id == handlerId) {
-        this.handlers.removeAt(i);
+        this.handlers.splice(i, 1);
         break;
       }
     }
@@ -39,7 +39,7 @@
     for (var i = 0; i < this.handlers.length; i++) {
       this.handlers[i].method.apply(null, arguments);
       if (this.handlers[i].once) {
-        this.handlers.removeAt(i);
+        this.handlers.splice(i, 1);
         i -= 1;
       }
     }
