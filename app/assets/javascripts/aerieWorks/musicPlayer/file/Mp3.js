@@ -15,7 +15,12 @@
   // Private methods
   function readTags(buffer) {
     aw.log.debug('aw.musicPlayer.file.Mp3.readTags: Reading id3v2 tags for ' + this.filename);
-    this.id3v2.read(buffer);
+    if (!this.id3v2.read(buffer)) {
+      aw.log.debug('aw.musicPlayer.file.Mp3.readTags: Buffer too small, requesting first ' + this.id3v2.fullSize + ' bytes of file.');
+      this.file.read(this.id3v2.fullSize, readTags.bind(this));
+      return;
+    }
+
     aw.log.debug('aw.musicPlayer.file.Mp3.readTags: triggering onFileChanged.');
     this.onFileChanged.trigger(this);
   }

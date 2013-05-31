@@ -103,6 +103,19 @@
     return String.fromCharCode.apply(null, bytes);
   };
 
+  String.fromUtf16 = function (bytes) {
+    var asciiBytes = [];
+    for (var i = 2; i < bytes.length - 1; i += 2) {
+      if (bytes[i + 1] == 0 && bytes[i] < 128) {
+        asciiBytes.push(bytes[i]);
+      } else {
+        asciiBytes.push(63); // Use '?' for non-ASCII characters.
+      }
+    }
+
+    return String.fromAscii(asciiBytes);
+  }
+
   String.fromUtf8 = function(bytes, terminatable) {
     var codepoints = [];
     var index = 0;

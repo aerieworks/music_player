@@ -87,6 +87,7 @@
     }
 
     id3.size = reader.readSyncsafeInt();
+    id3.fullSize = id3.size + (id3.hasFooter ? 20 : 10);
 
     log('readHeader: v' + id3.version +
       (id3.unsync ? ' unsynchronized' : '') +
@@ -260,6 +261,9 @@
     if (encoding === null || encoding == 0) {
       // ASCII or ISO-8859-1 (for now...)
       return String.fromAscii(bytes);
+    } else if (encoding == 1) {
+      // UTF-16
+      return String.fromUtf16(bytes);
     } else if (encoding == 3) {
       // UTF-8
       return String.fromUtf8(bytes);
@@ -300,12 +304,19 @@
     headerView = new Uint8Array(buffer, 0, 10);
     readHeader(this, new aw.io.ForwardReader(headerView));
 
+    if (this.size > buffer.byteLength) {
+      aw.log.info('aw.musicPlayer.metadata.Id3v2Reader.read: Buffer is too small, aborting read.  Tag size: ' + this.size + '; Buffer size: ' + buffer.byteLength);
+      return false;
+    }
+
     bodyView = new Uint8Array(buffer, 10, this.size);
     bodyReader = new aw.io.ForwardReader(bodyView);
     if (this.hasExtendedHeader) {
       readExtendedHeader(this, bodyReader);
     }
     readFrames(this, bodyReader);
+
+    return true;
   }
 
   frameReaders = {

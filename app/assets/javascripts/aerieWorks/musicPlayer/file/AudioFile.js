@@ -6,6 +6,7 @@
       return;
     }
 
+    this.file = file;
     this.url = file.getUrl();
     this.filename = file.name;
     this.onFileChanged = new aw.Event();
