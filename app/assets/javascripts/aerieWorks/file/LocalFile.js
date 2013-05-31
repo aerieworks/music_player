@@ -16,10 +16,16 @@
   function read(suggestedSize, callback) {
     if (this.buffer) {
       callback.call(null, this.buffer);
-    } else {
-      var reader = new aw.io.QueuedReader();
-      reader.readBuffer(this.file, callback);
+      return;
     }
+
+    function callbackWrapper(buf) {
+      this.buffer = buf;
+      callback.call(null, this.buffer);
+    }
+
+    var reader = new aw.io.QueuedReader();
+    reader.readBuffer(this.file, callbackWrapper.bind(this));
   }
 
   constructor.prototype = {

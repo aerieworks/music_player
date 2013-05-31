@@ -21,7 +21,13 @@
     }
 
     function readByte() {
-        return this.view[this.index++];
+        var b = this.view[this.index];
+        if (b == null || b == undefined) {
+          aw.log.warn('ForwardReader.readByte: got null byte at index ' + this.index);
+        }
+
+        this.index += 1;
+        return b;
     }
 
     function readBytes(length) {

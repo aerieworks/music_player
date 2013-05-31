@@ -6,14 +6,15 @@
   function PlaylistView(
       playlist,
       playlistNode,
-      btnAddFiles,
+      btnAddDriveFiles,
       fileSelector,
       btnRemoveAll) {
     this.playlist = playlist;
     this.playlistNode = playlistNode;
     this.fileSelector = fileSelector;
+    this.driveFileSelector = null;
 
-    //btnAddFiles.click(btnAddFilesClicked.bind(this));
+    btnAddDriveFiles.click(btnAddDriveFilesClicked.bind(this));
     btnRemoveAll.click(btnRemoveAllClicked.bind(this));
     fileSelector.change(fileSelectorChanged.bind(this));
     playlistNode.bind('dragenter', playlistDragEnter.bind(this));
@@ -27,10 +28,13 @@
   }
 
   // DOM event handlers
-  function btnAddFilesClicked(ev) {
-    aw.file.DriveFileSource.getList('audio/mpeg', function (files) {
-      addFiles(this, files);
-    });
+  function btnAddDriveFilesClicked(ev) {
+    if (this.driveFileSelector == null) {
+      this.driveFileSelector = new aw.musicPlayer.ui.RemoteFileSelector(aw.file.DriveFileSource);
+      this.driveFileSelector.onFilesSelected.addHandler(addDriveFiles.bind(this));
+    }
+
+    this.driveFileSelector.show();
   }
 
   function btnRemoveAllClicked(ev) {
@@ -102,6 +106,10 @@
   }
 
   // Private methods
+  function addDriveFiles(files) {
+    addFiles(this, files);
+  }
+
   function addFiles(view, files) {
     for (var i = 0; i < files.length; i++) {
       if (/^audio\//.test(files[i].type)) {

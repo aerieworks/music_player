@@ -1,146 +1,154 @@
 html, body {
-    height: 100%;
-    border: none;
-    margin: 0;
-    padding: 0;
+  height: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    background-color: #222222;
-    color: #00ff00;
-    font-family: verdana;
+  background-color: #222222;
+  color: #00ff00;
+  font-family: verdana;
 }
 
 hr {
-    margin: 0;
-    padding: 0;
-    clear: both;
+  margin: 0;
+  padding: 0;
+  clear: both;
 }
 
 ul {
-    margin: 0;
-    padding: 0;
-    border: none;
-    list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  list-style-type: none;
 }
 
 #playerUI {
-    height: 84px;
-    margin: 0 auto;
-    padding: 4px 0;
-    border-bottom: 2px solid #aaaaaa;
+  height: 84px;
+  margin: 0 auto;
+  padding: 4px 0;
+  border-bottom: 2px solid #aaaaaa;
 }
 
 #timeDisplay {
-    height: 24px;
-    text-align: center;
-    font-family: courier;
-    font-weight: bold;
-    font-size: 24px;
-    cursor: default;
+  height: 24px;
+  text-align: center;
+  font-family: courier;
+  font-weight: bold;
+  font-size: 24px;
+  cursor: default;
 }
 
 #currentFile {
-    height: 14px;
-    width: 100%;
-    margin: 3px 0;
-    text-align: center;
-    font-size: 12px;
-    overflow: hidden;
+  height: 14px;
+  width: 100%;
+  margin: 3px 0;
+  text-align: center;
+  font-size: 12px;
+  overflow: hidden;
 }
 
 #positionTracker {
-    position: relative;
-    height: 10px;
-    width: 300px;
-    margin: 0 auto;
-    border: none;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    background-image: none;
-    background-color: #777777;
-    cursor: pointer;
+  position: relative;
+  height: 10px;
+  width: 300px;
+  margin: 0 auto;
+  border: none;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  background-image: none;
+  background-color: #777777;
+  cursor: pointer;
 }
 
 #positionTracker > .ui-slider-handle {
-    top: 0;
-    height: 8px;
-    border-width: 1px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    background-image: none;
-    background-color: #f6f6f6;
-    cursor: ew-resize;
+  top: 0;
+  height: 8px;
+  border-width: 1px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  background-image: none;
+  background-color: #f6f6f6;
+  cursor: ew-resize;
 }
 
 .buttons {
-    margin: 4px 6px;
-    height: 26px;
-    list-style-type: none;
+  margin: 4px 6px;
+  height: 26px;
+  list-style-type: none;
 }
 
 .buttons > li {
-    float: left;
-    height: 26px;
+  float: left;
+  height: 26px;
 }
 
 #playerControls {
-    width: 150px;
-    margin: 0 auto;
+  width: 150px;
+  margin: 0 auto;
 }
 
 #playerControls > li > button {
-    width: 50px; 
-}
-
-#fileSelectorContainer {
-    position: relative;
+  width: 50px;
 }
 
 #fileSelector {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-}
-
-#fileSelector, #btnSelectFiles {
-    width: 100px;
+  width: 82px;
 }
 
 #playlist {
-    position: absolute;
-    top: 128px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: auto;
+  position: absolute;
+  top: 128px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
 }
 
 .playlistItem {
-    height: 16px;
-    line-height: 14px;
-    font-family: verdana;
-    font-size: 14px;
-    cursor: pointer;
+  height: 16px;
+  line-height: 14px;
+  font-family: verdana;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .playlistItemHandle {
-    width: 20px;
-    height: 100%;
-    float: left;
+  width: 20px;
+  height: 100%;
+  float: left;
 }
 
 .playlistItemButton {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    border: none;
-    display: block;
-    background: none;
-    color: inherit;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: block;
+  background: none;
+  color: inherit;
 }
 
 .selectedPlaylistItem {
-    background-color: #444444;
+  background-color: #444444;
 }
+
+.aw-dialog {
+  display: none;
+}
+
+.aw-loading {
+  min-height: 50px;
+  background-color: purple;
+}
+
+.aw-remote-file-list-item {
+  border: 1px dashed transparent;
+}
+
+.aw-remote-file-list-item.aw-selected {
+  border-color: #444;
+  background-color: #ff8800;
+}
+

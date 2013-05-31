@@ -9,15 +9,19 @@
   </ul>
 </div>
 <ul class="buttons">
-  <li id="fileSelectorContainer">
+  <li>
     <input type="file" id="fileSelector" multiple="true" accept="audio/*" />
-    <button type="button" id="btnSelectFiles">Add Files</button>
+  </li>
+  <li>
+    <button type="button" id="btnAddDriveFiles">Add Drive Files</button>
   </li>
   <li>
     <button type="button" id="btnRemoveAllFiles">Remove All</button>
   </li>
 </ul>
 <ul id="playlist" dropzone="copy f:audio/*"></ul>
+
+<%= render "remote_file_selector" %>
 
 <% content_for :javascript do %>
   <script type="text/javascript">
@@ -40,7 +44,7 @@
     var playlistView = new mp.ui.PlaylistView(
       playlist,
       $('#playlist'),
-      $('#btnSelectFiles'),
+      $('#btnAddDriveFiles'),
       $('#fileSelector'),
       $('#btnRemoveAllFiles'));
   });

@@ -64,7 +64,7 @@
     var readBytes;
 
     // Abort if the file doesn't start with the ASCII string "ID3".
-    if ("ID3" != String.fromAscii(reader.readBytes(3))) {
+    if ('ID3' != String.fromAscii(reader.readBytes(3))) {
       abortRead(id3, 'No tag header found.');
     }
 
