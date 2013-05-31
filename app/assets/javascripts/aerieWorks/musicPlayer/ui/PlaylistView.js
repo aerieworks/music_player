@@ -1,5 +1,5 @@
 "use strict";
-(function (AW, $) {
+(function (aw, $) {
   var CSS_selectedPlaylistItem = 'selectedPlaylistItem';
 
   // Constructor
@@ -28,7 +28,7 @@
 
   // DOM event handlers
   function btnAddFilesClicked(ev) {
-    AW.File.DriveFileSource.getList('audio/mpeg', function (files) {
+    aw.file.DriveFileSource.getList('audio/mpeg', function (files) {
       addFiles(this, files);
     });
   }
@@ -41,7 +41,7 @@
     if (ev.target.files != null) {
       var files = [];
       for (var i = 0; i < ev.target.files.length; i++) {
-        files.push(new AW.file.LocalFile(ev.target.files[i]));
+        files.push(new aw.file.LocalFile(ev.target.files[i]));
       }
 
       addFiles(this, files);
@@ -76,7 +76,7 @@
   }
 
   function onPlaylistItemAdded(item) {
-    AW.Log.debug('AW.MusicPlayer.Ui.PlaylistView.onPlaylistItemAdded(): called.');
+    aw.log.debug('aw.musicPlayer.ui.PlaylistView.onPlaylistItemAdded(): called.');
     var itemWrapper = $('<li class="playlistItem" />');
     var itemHandle = $('<span class="playlistItemHandle"></span>');
     var itemLabel = $('<span></span>');
@@ -95,7 +95,7 @@
   }
 
   function onPlaylistItemSelected(item) {
-    AW.Log.debug('AW.MusicPlayer.Ui.PlaylistView.onPlaylistItemSelected(): called.');
+    aw.log.debug('aw.musicPlayer.ui.PlaylistView.onPlaylistItemSelected(): called.');
     var selectedNode = $('#' + getElementIDForItem(this, item));
     selectedNode.siblings().removeClass(CSS_selectedPlaylistItem);
     selectedNode.addClass(CSS_selectedPlaylistItem);
@@ -105,7 +105,7 @@
   function addFiles(view, files) {
     for (var i = 0; i < files.length; i++) {
       if (/^audio\//.test(files[i].type)) {
-        view.playlist.addItem(AW.MusicPlayer.File.AudioFile.create(files[i]));
+        view.playlist.addItem(aw.musicPlayer.file.AudioFile.create(files[i]));
       }
     }
   }
@@ -114,5 +114,5 @@
     return 'playlistItem_' + item.id;
   }
 
-  AW.MusicPlayer.Ui.PlaylistView = PlaylistView;
-})(window.AerieWorks, window.jQuery);
+  aw.musicPlayer.ui.PlaylistView = PlaylistView;
+})(window.aerieWorks, window.jQuery);

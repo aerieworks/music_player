@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   var logLevelNames = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
   var LogLevel = {
     Debug: 0,
@@ -26,7 +26,7 @@
     }
   }
 
-  AW.Log = {
+  aw.log = {
     LogLevel: LogLevel,
     getLogLevel: function () {
       return loggingLevel;
@@ -47,4 +47,4 @@
       log(LogLevel.Error, message);
     }
   };
-})(window.AerieWorks);
+})(window.aerieWorks);

@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   var nextItemID = 0;
 
   // Constructor
@@ -7,9 +7,9 @@
     this.items = [];
     this.selectedIndex = null;
 
-    this.onCleared = new AW.Event();
-    this.onItemAdded = new AW.Event();
-    this.onItemSelected = new AW.Event();
+    this.onCleared = new aw.Event();
+    this.onItemAdded = new aw.Event();
+    this.onItemSelected = new aw.Event();
   }
 
   // Private methods
@@ -85,5 +85,5 @@
     selectPrevious: selectPrevious
   };
 
-  AW.MusicPlayer.Playlist = playlist;
-})(window.AerieWorks);
+  aw.musicPlayer.Playlist = playlist;
+})(window.aerieWorks);

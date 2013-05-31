@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   // Constructor
   function id3v1Reader() {
     this.album = null;
@@ -34,7 +34,7 @@
   // Public methods
   function readTags(buffer) {
     var tag = new Uint8Array(buffer, buffer.byteLength - 128);
-    AW.Log.debug('AW.MusicPlayer.Metadata.Id3v1Reader.readTags: reading tags.');
+    aw.log.debug('aw.musicPlayer.metadata.Id3v1Reader.readTags: reading tags.');
     if ('TAG' == tag.getString(0, 3)) {
       this.title = readTextFrame(this, tag, 3, 30);
       this.artist = readTextFrame(this, tag, 33, 30);
@@ -50,5 +50,5 @@
     readTags: readTags
   };
 
-  AW.MusicPlayer.Metadata.Id3v1Reader = id3v1Reader;
-})(window.AerieWorks);
+  aw.musicPlayer.metadata.Id3v1Reader = id3v1Reader;
+})(window.aerieWorks);

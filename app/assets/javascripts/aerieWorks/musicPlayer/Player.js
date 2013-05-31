@@ -1,5 +1,5 @@
 "use strict";
-(function (AW, MP) {
+(function (aw, MP) {
   // Constructor
   function player() {
     var audioNode = $('<audio />').css('display', 'none');
@@ -7,9 +7,9 @@
 
     this.audio = audioNode[0];
 
-    this.onPlaybackStarted = new AW.Event();
-    this.onPlaybackStopped = new AW.Event();
-    this.onPlaybackPaused = new AW.Event();
+    this.onPlaybackStarted = new aw.Event();
+    this.onPlaybackStopped = new aw.Event();
+    this.onPlaybackPaused = new aw.Event();
 
     audioNode.bind('play', playbackStarted.bind(this));
     audioNode.bind('pause', playbackPaused.bind(this));
@@ -18,12 +18,12 @@
 
   // DOM event handlers
   function playbackStarted(ev) {
-    AW.Log.debug('AW.MusicPlayer.Player.playbackStarted: Received DOM "play" event.');
+    aw.log.debug('aw.musicPlayer.Player.playbackStarted: Received DOM "play" event.');
     this.onPlaybackStarted.trigger();
   }
 
   function playbackStopped(ev) {
-    AW.Log.debug('Received DOM "ended" event.');
+    aw.log.debug('Received DOM "ended" event.');
     // DOM events don't seem to fire if we replay after the track finishes.
     // Reassigning the audio source seems to fix this glitch.
     this.audio.src = this.audio.src;
@@ -31,7 +31,7 @@
   }
 
   function playbackPaused(ev) {
-    AW.Log.debug('Received DOM "paused" event.');
+    aw.log.debug('Received DOM "paused" event.');
     this.onPlaybackPaused.trigger();
   }
 
@@ -57,7 +57,7 @@
   }
 
   function pause() {
-    AW.Log.debug('AW.MusicPlayer.Player.pause: Calling DOM::audio.pause().');
+    aw.log.debug('aw.musicPlayer.Player.pause: Calling DOM::audio.pause().');
     this.audio.pause();
   }
 
@@ -65,7 +65,7 @@
     if (this.isStopped()) {
       this.setCurrentPosition(0);
     }
-    AW.Log.debug('AW.MusicPlayer.Player.play: Calling DOM::audio.play().');
+    aw.log.debug('aw.musicPlayer.Player.play: Calling DOM::audio.play().');
     this.audio.play();
   }
 
@@ -77,7 +77,7 @@
     var wasPlaying = this.isPlaying();
 
     this.audio.src = audioFile.url;
-    AW.Log.debug('AW.MusicPlayer.Player.setFile: set to "' + audioFile.getDisplayName() + '"');
+    aw.log.debug('aw.musicPlayer.Player.setFile: set to "' + audioFile.getDisplayName() + '"');
 
     if (wasPlaying) {
       this.play();
@@ -85,7 +85,7 @@
   }
 
   function stop() {
-    AW.Log.debug('AW.MusicPlayer.Player.stop: called.');
+    aw.log.debug('aw.musicPlayer.Player.stop: called.');
     this.audio.pause();
     this.setCurrentPosition(0);
     this.audio.src = null;
@@ -104,5 +104,5 @@
     stop: stop
   };
 
-  AW.MusicPlayer.Player = player;
-})(window.AerieWorks);
+  aw.musicPlayer.Player = player;
+})(window.aerieWorks);

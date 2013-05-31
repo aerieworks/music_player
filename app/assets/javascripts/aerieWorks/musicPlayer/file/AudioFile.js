@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   // Constructor
   function audioFile(file) {
     if (file == null) {
@@ -8,7 +8,7 @@
 
     this.url = file.getUrl();
     this.filename = file.name;
-    this.onFileChanged = new AW.Event();
+    this.onFileChanged = new aw.Event();
   }
 
   function getDisplayName() {
@@ -22,13 +22,13 @@
   // Factory
   audioFile.create = function (file) {
     if (/\.mp3$/.test(file.name)) {
-      AW.Log.debug('AW.MusicPlayer.File.AudioFile.create: creating mp3 from ' + file.name);
-      return new AW.MusicPlayer.File.Mp3(file);
+      aw.log.debug('aw.musicPlayer.file.AudioFile.create: creating mp3 from ' + file.name);
+      return new aw.musicPlayer.file.Mp3(file);
     } else {
-      AW.Log.debug('AW.MusicPlayer.File.AudioFile.create: creating audioFile from ' + file.name);
-      return new AW.MusicPlayer.File.AudioFile(file);
+      aw.log.debug('aw.musicPlayer.file.AudioFile.create: creating audioFile from ' + file.name);
+      return new aw.musicPlayer.file.AudioFile(file);
     }
   }
 
-  AW.MusicPlayer.File.AudioFile = audioFile;
-})(window.AerieWorks);
+  aw.musicPlayer.file.AudioFile = audioFile;
+})(window.aerieWorks);

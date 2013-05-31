@@ -1,21 +1,21 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   var isClientLoaded = false;
-  var clientTrigger = new AW.OneTimeTrigger({
-    name: 'AW.Google.client',
+  var clientTrigger = new aw.OneTimeTrigger({
+    name: 'aw.google.client',
     hardEvaluate: function(success) {
       if (isClientLoaded) {
-        AW.Log.debug('Google: Client required and loaded.');
+        aw.log.debug('Google: Client required and loaded.');
         success.call(null);
       } else {
-        AW.Log.debug('Google: Client required, but not loaded yet.');
-        window.AerieWorks_Google_onClientLoad = success;
+        aw.log.debug('Google: Client required, but not loaded yet.');
+        window.aerieWorks_vendor_google_onClientLoad = success;
       }
     }
   });
 
-  var authorizationTrigger = new AW.OneTimeTrigger({
-    name: 'AW.Google.authorization',
+  var authorizationTrigger = new aw.OneTimeTrigger({
+    name: 'aw.google.authorization',
     dependencies: [ clientTrigger ],
     softEvaluate: function (success, failure) {
       authorize(false, success, failure);
@@ -31,20 +31,20 @@
   var apiTriggers = {};
 
   function authorize(required, success, failure) {
-    AW.Log.debug('Google.authorize: Checking authorization (' + (required ? 'hard' : 'soft') + ').');
+    aw.log.debug('Google.authorize: Checking authorization (' + (required ? 'hard' : 'soft') + ').');
     gapi.auth.authorize({
         client_id: CLIENT_ID,
         scope: SCOPES,
         immediate: !required
       },
       function (authResult) {
-        AW.Log.debug('Google.authorize: Returned from API.');
-        AW.Log.debug(authResult);
+        aw.log.debug('Google.authorize: Returned from API.');
+        aw.log.debug(authResult);
         if (authResult && !authResult.error) {
-          AW.Log.debug('Google.authorize: Authorized.');
+          aw.log.debug('Google.authorize: Authorized.');
           success.call();
         } else {
-          AW.Log.debug('Google.authorize: Not authorized (' + (required ? 'soft' : 'hard') + ').');
+          aw.log.debug('Google.authorize: Not authorized (' + (required ? 'soft' : 'hard') + ').');
           failure.call();
         }
       }
@@ -58,11 +58,11 @@
 
     var trigger = apiTriggers[api][version];
     if (trigger == null) {
-      trigger = new AW.OneTimeTrigger({
-        name: 'AW.Google.client.' + api + '.' + version,
+      trigger = new aw.OneTimeTrigger({
+        name: 'aw.google.client.' + api + '.' + version,
         dependencies: [ clientTrigger ],
         hardEvaluate: function (success) {
-          AW.Log.debug('Google.api: Loading "' + api + '" version "' + version + '".');
+          aw.log.debug('Google.api: Loading "' + api + '" version "' + version + '".');
           gapi.client.load(api, version, success);
         }
       });
@@ -78,14 +78,14 @@
       if (response.error) {
         if (response.error.code == 401) {
           var success = function () { execute(request, callback); };
-          AW.Log.info('Google.execute: Authorization expired, reauthorizing.');
+          aw.log.info('Google.execute: Authorization expired, reauthorizing.');
           authorize(false, success, function () {
             authorize(true, success, function () {
-              AW.Log.error('Google.execute: reauthorization failed.');
+              aw.log.error('Google.execute: reauthorization failed.');
             });
           });
         } else {
-          AW.Log.error('Google.execute: request execution error: ' + response.error.message);
+          aw.log.error('Google.execute: request execution error: ' + response.error.message);
         }
       } else {
         callback(response);
@@ -93,14 +93,14 @@
     });
   }
 
-  window.AerieWorks_Google_onClientLoad = function () {
-    AW.Log.debug('Google: Client loaded.');
+  window.aerieWorks_vendor_google_onClientLoad = function () {
+    aw.log.debug('Google: Client loaded.');
     isClientLoaded = true;
   };
 
-  AW.Google = {
+  aw.vendor.google = {
     api: getApiTrigger,
     authorization: authorizationTrigger,
     execute: execute
   };
-})(window.AerieWorks);
+})(window.aerieWorks);

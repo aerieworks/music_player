@@ -28,4 +28,4 @@
   };
 
   aw.file.LocalFile = constructor;
-})(window.AerieWorks);
+})(window.aerieWorks);

@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   // The minimum byte length of an ID3 tag:
   //  10 byte tag header
   //   6 byte frame header
@@ -14,7 +14,7 @@
   var frameReaders;
 
   function log(message) {
-    AW.Log.debug('AW.MusicPlayer.Metadata.ID3v2Reader.' + message);
+    aw.log.debug('aw.musicPlayer.metadata.ID3v2Reader.' + message);
   }
 
   // Constructor
@@ -298,10 +298,10 @@
     }
 
     headerView = new Uint8Array(buffer, 0, 10);
-    readHeader(this, new AW.File.ForwardReader(headerView));
+    readHeader(this, new aw.io.ForwardReader(headerView));
 
     bodyView = new Uint8Array(buffer, 10, this.size);
-    bodyReader = new AW.File.ForwardReader(bodyView);
+    bodyReader = new aw.io.ForwardReader(bodyView);
     if (this.hasExtendedHeader) {
       readExtendedHeader(this, bodyReader);
     }
@@ -324,5 +324,5 @@
     read: read
   };
 
-  AW.MusicPlayer.Metadata.Id3v2Reader = ID3v2Reader;
-})(window.AerieWorks);
+  aw.musicPlayer.metadata.Id3v2Reader = ID3v2Reader;
+})(window.aerieWorks);

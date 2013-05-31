@@ -10,10 +10,10 @@
 // WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
 // GO AFTER THE REQUIRES BELOW.
 //
-//= require AerieWorks/core.js
-//= require AerieWorks/Log.js
-//= require AerieWorks/Event.js
-//= require AerieWorks/OneTimeTrigger.js
-//= require AerieWorks/Google/core.js
-//= require AerieWorks/MusicPlayer/core.js
+//= require aerieWorks/core.js
+//= require aerieWorks/log.js
+//= require aerieWorks/Event.js
+//= require aerieWorks/OneTimeTrigger.js
+//= require aerieWorks/vendor/google.js
+//= require aerieWorks/musicPlayer/core.js
 //= require_tree .

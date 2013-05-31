@@ -1,22 +1,22 @@
 "use strict";
-(function (AW) {
+(function (aw) {
   // Constructor
   function mp3(file) {
     var reader;
 
-    AW.MusicPlayer.File.AudioFile.call(this, file);
+    aw.musicPlayer.file.AudioFile.call(this, file);
 
-    this.id3v1 = new AW.MusicPlayer.Metadata.Id3v1Reader();
-    this.id3v2 = new AW.MusicPlayer.Metadata.Id3v2Reader();
+    this.id3v1 = new aw.musicPlayer.metadata.Id3v1Reader();
+    this.id3v2 = new aw.musicPlayer.metadata.Id3v2Reader();
 
     file.read(4096, readTags.bind(this));
   }
 
   // Private methods
   function readTags(buffer) {
-    AW.Log.debug('AW.MusicPlayer.File.Mp3.readTags: Reading id3v2 tags for ' + this.filename);
+    aw.log.debug('aw.musicPlayer.file.Mp3.readTags: Reading id3v2 tags for ' + this.filename);
     this.id3v2.read(buffer);
-    AW.Log.debug('AW.MusicPlayer.File.Mp3.readTags: triggering onFileChanged.');
+    aw.log.debug('aw.musicPlayer.file.Mp3.readTags: triggering onFileChanged.');
     this.onFileChanged.trigger(this);
   }
 
@@ -57,12 +57,12 @@
     if (parts.length > 0) {
       return parts.join(' - ');
     } else {
-      return AW.MusicPlayer.File.AudioFile.prototype.getDisplayName.call(this);
+      return aw.musicPlayer.file.AudioFile.prototype.getDisplayName.call(this);
     }
   }
 
-  mp3.prototype = new AW.MusicPlayer.File.AudioFile();
+  mp3.prototype = new aw.musicPlayer.file.AudioFile();
   mp3.prototype.getDisplayName = getDisplayName;
 
-  AW.MusicPlayer.File.Mp3 = mp3;
-})(window.AerieWorks);
+  aw.musicPlayer.file.Mp3 = mp3;
+})(window.aerieWorks);

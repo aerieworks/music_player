@@ -1,5 +1,5 @@
 "use strict";
-(function (AW, $) {
+(function (aw, $) {
   var handlerDefaults = {
     once: false
   };
@@ -51,5 +51,5 @@
     trigger: trigger
   };
 
-  AW.Event = constructor;
-})(window.AerieWorks, window.jQuery);
+  aw.Event = constructor;
+})(window.aerieWorks, window.jQuery);

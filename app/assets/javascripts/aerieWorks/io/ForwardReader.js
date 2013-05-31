@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (aw) {
     // Constructor
     function ForwardReader(view) {
         this.view = view;
@@ -51,5 +51,5 @@
         readUint32: readUint32
     };
 
-    AW.File.ForwardReader = ForwardReader;
-})(window.AerieWorks);
+    aw.io.ForwardReader = ForwardReader;
+})(window.aerieWorks);
