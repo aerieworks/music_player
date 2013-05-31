@@ -9,20 +9,13 @@
     this.id3v1 = new AW.MusicPlayer.Metadata.Id3v1Reader();
     this.id3v2 = new AW.MusicPlayer.Metadata.Id3v2Reader();
 
-    reader = new AW.File.QueuedReader();
-    reader.readBuffer(file, readTags.bind(this));
+    file.read(4096, readTags.bind(this));
   }
 
   // Private methods
   function readTags(buffer) {
-    AW.Log.debug('AW.MusicPlayer.File.Mp3.readTags: Reading id3v1 tags for ' + this.filename);
-    //this.id3v1.readTags(buffer);
     AW.Log.debug('AW.MusicPlayer.File.Mp3.readTags: Reading id3v2 tags for ' + this.filename);
-    //try {
-      this.id3v2.read(buffer);
-    //} catch (ex) {
-      //AW.Log.debug('AW.MusicPlayer.File.Mp3.readTags: ' + ex.message);
-    //}
+    this.id3v2.read(buffer);
     AW.Log.debug('AW.MusicPlayer.File.Mp3.readTags: triggering onFileChanged.');
     this.onFileChanged.trigger(this);
   }

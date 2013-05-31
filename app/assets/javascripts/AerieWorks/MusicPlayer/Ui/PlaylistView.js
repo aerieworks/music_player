@@ -1,5 +1,5 @@
 "use strict";
-(function (AW) {
+(function (AW, $) {
   var CSS_selectedPlaylistItem = 'selectedPlaylistItem';
 
   // Constructor
@@ -13,6 +13,7 @@
     this.playlistNode = playlistNode;
     this.fileSelector = fileSelector;
 
+    //btnAddFiles.click(btnAddFilesClicked.bind(this));
     btnRemoveAll.click(btnRemoveAllClicked.bind(this));
     fileSelector.change(fileSelectorChanged.bind(this));
     playlistNode.bind('dragenter', playlistDragEnter.bind(this));
@@ -26,13 +27,23 @@
   }
 
   // DOM event handlers
+  function btnAddFilesClicked(ev) {
+    AW.File.DriveFileSource.getList('audio/mpeg', function (files) {
+      addFiles(this, files);
+    });
+  }
+
   function btnRemoveAllClicked(ev) {
     this.playlist.clear();
   }
 
   function fileSelectorChanged(ev) {
-    var files = ev.target.files;
-    if (files != null) {
+    if (ev.target.files != null) {
+      var files = [];
+      for (var i = 0; i < ev.target.files.length; i++) {
+        files.push(new AW.file.LocalFile(ev.target.files[i]));
+      }
+
       addFiles(this, files);
     }
   }
@@ -79,7 +90,7 @@
     this.playlistNode.append(itemWrapper);
 
     item.file.onFileChanged.addHandler(function (file) {
-      itemButton.text(file.getDisplayName());
+      itemLabel.text(file.getDisplayName());
     });
   }
 
@@ -104,4 +115,4 @@
   }
 
   AW.MusicPlayer.Ui.PlaylistView = PlaylistView;
-})(window.AerieWorks);
+})(window.AerieWorks, window.jQuery);

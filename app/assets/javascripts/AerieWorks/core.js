@@ -1,7 +1,9 @@
 "use strict";
 (function () {
   window.AerieWorks = {
-    File: {}
+    File: {},
+    file: {},
+    io: {}
   };
 
   function getCodePointFromUtf8(bytes, offset) {

@@ -1,14 +1,12 @@
 "use strict";
 (function (AW) {
-  var URLAPI = window.URL || window.webkitURL;
-
   // Constructor
   function audioFile(file) {
     if (file == null) {
       return;
     }
 
-    this.url = URLAPI.createObjectURL(file);
+    this.url = file.getUrl();
     this.filename = file.name;
     this.onFileChanged = new AW.Event();
   }

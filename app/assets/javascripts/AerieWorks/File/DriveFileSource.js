@@ -7,7 +7,7 @@
   });
 
 
-  function getList(mimeType) {
+  function getList(mimeType, callback) {
     driveTrigger.require(function () {
       var request = gapi.client.drive.files.list({
         q: "mimeType = '" + mimeType + "'"
@@ -17,8 +17,12 @@
         if (result.items) {
           AW.Log.debug('DriveFileSource.getList: ' + result.items.length + ' files of MIME type ' + mimeType + ' found.');
           for (var i = 0; i < result.items.length; i++) {
-            AW.Log.debug('DriveFileSource.getList: found "' + result.items[0].title + '"');
+            AW.Log.debug('DriveFileSource.getList: found "' + result.items[i].title + '"' +
+              '\n\tid: ' + result.items[i].id +
+              '\n\tselfLink: ' + result.items[i].selfLink +
+              '\n\tfileExtension: ' + result.items[i].fileExtension);
           }
+          callback.call(null, result);
         } else {
           AW.Log.debug('DriveFileSource.getList: No files of MIME type ' + mimeType + ' found.');
         }
