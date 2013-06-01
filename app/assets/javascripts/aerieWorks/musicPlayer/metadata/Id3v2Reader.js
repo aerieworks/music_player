@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
    'aerieWorks.log',
    'aerieWorks.io.ForwardReader'

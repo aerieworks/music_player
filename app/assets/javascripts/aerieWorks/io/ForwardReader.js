@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require('aerieWorks.io', [ 'aerieWorks.log' ], function (aw) {
     // Constructor
     function ForwardReader(view) {

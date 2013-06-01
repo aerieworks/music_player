@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require('aerieWorks.file', [
     'aerieWorks.OneTimeTrigger',
     'aerieWorks.vendor.google'

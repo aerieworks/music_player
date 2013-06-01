@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require(function (aw, $) {
   var handlerDefaults = {
     once: false

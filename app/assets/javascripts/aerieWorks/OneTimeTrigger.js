@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
   var State = {
     Unknown: 0,

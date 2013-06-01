@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require(function (aw) {
   var logLevelNames = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
   var LogLevel = {

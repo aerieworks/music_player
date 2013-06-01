@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require('aerieWorks.vendor', [
    'aerieWorks.log',
    'aerieWorks.OneTimeTrigger'

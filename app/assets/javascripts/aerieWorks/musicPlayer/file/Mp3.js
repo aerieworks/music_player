@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.file', [
    'aerieWorks.log',
    'aerieWorks.musicPlayer.file.AudioFile',

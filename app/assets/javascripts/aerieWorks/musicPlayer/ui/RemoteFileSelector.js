@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
    'aerieWorks.Event'
   ], function (aw, $) {
