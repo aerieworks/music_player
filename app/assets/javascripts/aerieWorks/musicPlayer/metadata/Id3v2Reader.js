@@ -1,5 +1,8 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
+   'aerieWorks.log',
+   'aerieWorks.io.ForwardReader'
+  ], function (aw) {
   // The minimum byte length of an ID3 tag:
   //  10 byte tag header
   //   6 byte frame header
@@ -331,9 +334,7 @@
     }
   };
 
-  ID3v2Reader.prototype = {
+  aw.musicPlayer.metadata.define('Id3v2Reader', ID3v2Reader, {
     read: read
-  };
-
-  aw.musicPlayer.metadata.Id3v2Reader = ID3v2Reader;
-})(window.aerieWorks);
+  });
+});

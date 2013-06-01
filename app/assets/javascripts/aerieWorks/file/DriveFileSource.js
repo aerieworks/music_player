@@ -1,5 +1,10 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.file', [
+    'aerieWorks.log',
+    'aerieWorks.OneTimeTrigger',
+    'aerieWorks.vendor.google',
+    'aerieWorks.file.DriveFile'
+  ], function (aw) {
   var driveTrigger = aw.vendor.google.api('drive', 'v2');
   driveTrigger.require();
 
@@ -36,8 +41,7 @@
     });
   }
 
-  aw.file.DriveFileSource = {
+  aw.file.define('DriveFileSource', {
     getList: getList
-  };
-
-})(window.aerieWorks);
+  });
+});

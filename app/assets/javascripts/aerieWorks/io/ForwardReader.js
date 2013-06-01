@@ -1,5 +1,5 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.io', [ 'aerieWorks.log' ], function (aw) {
     // Constructor
     function ForwardReader(view) {
         this.view = view;
@@ -49,13 +49,11 @@
         return readUint(this, 4, 8);
     }
 
-    ForwardReader.prototype = {
+    aw.io.define('ForwardReader', ForwardReader, {
         getRemainingBytes: getRemainingBytes,
         readByte: readByte,
         readBytes: readBytes,
         readSyncsafeInt: readSyncsafeInt,
         readUint32: readUint32
-    };
-
-    aw.io.ForwardReader = ForwardReader;
-})(window.aerieWorks);
+    });
+});

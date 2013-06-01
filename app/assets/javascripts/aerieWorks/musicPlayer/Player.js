@@ -1,5 +1,8 @@
 "use strict";
-(function (aw, MP) {
+window.aerieWorks.require('aerieWorks.musicPlayer', [
+   'aerieWorks.log',
+   'aerieWorks.Event'
+  ], function (aw) {
   // Constructor
   function player() {
     var audioNode = $('<audio />').css('display', 'none');
@@ -91,7 +94,7 @@
     this.audio.src = null;
   }
 
-  player.prototype = {
+  aw.musicPlayer.define('Player', player, {
     getCurrentPosition: getCurrentPosition,
     getDuration: getDuration,
     isPaused: isPaused,
@@ -102,7 +105,5 @@
     setCurrentPosition: setCurrentPosition,
     setFile: setFile,
     stop: stop
-  };
-
-  aw.musicPlayer.Player = player;
-})(window.aerieWorks);
+  });
+});

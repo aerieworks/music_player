@@ -1,5 +1,7 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.file', [
+    'aerieWorks.io.QueuedReader'
+  ], function (aw) {
   var urlApi = window.URL || window.webkitURL;
 
   function constructor(file) {
@@ -28,10 +30,8 @@
     reader.readBuffer(this.file, callbackWrapper.bind(this));
   }
 
-  constructor.prototype = {
+  aw.file.define('LocalFile', constructor, {
     getUrl: getUrl,
     read: read
-  };
-
-  aw.file.LocalFile = constructor;
-})(window.aerieWorks);
+  });
+});

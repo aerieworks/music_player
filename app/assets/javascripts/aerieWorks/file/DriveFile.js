@@ -1,5 +1,8 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.file', [
+    'aerieWorks.OneTimeTrigger',
+    'aerieWorks.vendor.google'
+  ], function (aw) {
   var driveTrigger = aw.vendor.google.api('drive', 'v2');
   driveTrigger.require();
 
@@ -42,10 +45,8 @@
     });
   }
 
-  constructor.prototype = {
+  aw.file.define('DriveFile', constructor, {
     getUrl: getUrl,
     read: read
-  };
-
-  aw.file.DriveFile = constructor;
-})(window.aerieWorks);
+  });
+});

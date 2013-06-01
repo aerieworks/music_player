@@ -1,10 +1,139 @@
-"use strict";
-(function () {
-  window.aerieWorks = {
-    file: {},
-    io: {},
-    vendor: {}
-  };
+'use strict';
+(function ($) {
+  var typeRequirers = {};
+
+  var Namespace = (function () {
+    function namespaceConstructor(parentNamespace, name) {
+      this.parentNamespace = parentNamespace;
+      this.name = name;
+
+      if (this.parentNamespace) {
+        this.fullName = this.parentNamespace.fullName + '.' + this.name;
+      } else {
+        this.fullName = this.name;
+      }
+
+      console.log('aerieWorks.Namespace: Created namespace ' + this.fullName);
+    }
+
+    namespaceConstructor.prototype = {
+      createNamespace: function (name) {
+        this[name] = new Namespace(this, name);
+        return this[name];
+      },
+
+      define: function (typeName, definition, prototype) {
+        if ($.isPlainObject(typeName)) {
+          var typeMap = typeName;
+          var typeNames = Object.keys(typeMap);
+          for (var i = 0; i < typeNames.length; i++) {
+            this.define(typeNames[i], typeMap[typeNames[i]]);
+          }
+          return;
+        }
+
+        if (this[typeName] != null) {
+          throw 'Type "' + typeName + '" already defined in namespace ' + this.fullName + '.';
+        }
+
+        this[typeName] = definition;
+        if (prototype != null) {
+          this[typeName].prototype = prototype;
+        }
+        console.log('aerieWorks.Namespace: Defined type ' + this.fullName + '.' + typeName);
+
+        var requirers = typeRequirers[this.fullName + '.' + typeName];
+        if (requirers != null) {
+          while (requirers.length > 0) {
+            var req = requirers.shift();
+            req.remaining -= 1;
+            if (req.remaining == 0) {
+              require(req.namespaceName, req.fn);
+            }
+          }
+        }
+      },
+
+      isDefined: function (name) {
+        return this.hasOwnProperty(name);
+      }
+    };
+
+    return namespaceConstructor;
+  })();
+
+  var namespaceRegEx = /^[a-z][a-zA-Z0-9]*(?:\.[a-z][a-zA-Z0-9]*)*$/;
+  function getNamespace(namespace, doNotCreate) {
+    if (!namespaceRegEx.test(namespace)) {
+      throw 'Invalid namespace name: "' + namespace + '".';
+    }
+
+    var current = window;
+    var parts = namespace.split('.');
+    var currentName = '';
+    for (var i = 0; i < parts.length; i++) {
+      if (current[parts[i]] == null) {
+        if (doNotCreate) {
+          return null;
+        } else if (current instanceof Namespace) {
+          current.createNamespace(parts[i]);
+        } else {
+          current[parts[i]] = new Namespace(null, parts[i]);
+        }
+      } else if (!(current[parts[i]] instanceof Namespace)) {
+        throw parts.slice(0, i + 1).join('.') + ' exists, but is not a namespace.';
+      }
+
+      current = current[parts[i]];
+    }
+
+    return current;
+  }
+
+  function evaluateDefinitionRequirements(requiredDefinitions, namespaceName, fn) {
+    var allMet = true;
+    var requirer = {
+      remaining: 0,
+      namespaceName: namespaceName,
+      fn: fn
+    };
+
+    for (var i = 0; i < requiredDefinitions.length; i++) {
+      var dfn = requiredDefinitions[i];
+      var nsEndIndex = dfn.lastIndexOf('.');
+      var dfnNamespace = getNamespace(dfn.substring(0, nsEndIndex), true);
+      if (dfnNamespace == null || !dfnNamespace.isDefined(dfn.substring(nsEndIndex + 1))) {
+        console.log('Found pending dependency on ' + dfn + '.');
+        requirer.remaining += 1;
+
+        if (typeRequirers[dfn] == null) {
+          typeRequirers[dfn] = [];
+        }
+        typeRequirers[dfn].push(requirer);
+        allMet = false;
+      }
+    }
+
+    return allMet;
+  }
+
+  function require(/* [namespaceName,][ requiredDefinitions,] fn */) {
+    var params = Array.prototype.slice.call(arguments);
+    var namespaceName = (params.length > 1 && typeof params[0] == 'string') ? params.shift() : null;
+    var requiredDefinitions = params.length > 1 ? params.shift() : null;
+    var fn = params.shift();
+
+    if (requiredDefinitions == null || evaluateDefinitionRequirements(requiredDefinitions, namespaceName, fn)) {
+      var namespace = namespaceName == null ? null : getNamespace(namespaceName);
+      fn(window.aerieWorks, $, namespace);
+    }
+  }
+
+  window.aerieWorks = new Namespace(null, 'aerieWorks');
+  require('aerieWorks', function (aw) {
+    aw.getNamespace = getNamespace;
+    aw.require = require;
+  });
 
   function getCodePointFromUtf8(bytes, offset) {
     var length;
@@ -135,4 +264,4 @@
 
     return String.fromCodePoints(codepoints);
   };
-})();
+})(window.jQuery);

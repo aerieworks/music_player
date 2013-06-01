@@ -1,5 +1,5 @@
 "use strict";
-(function (aw, $) {
+window.aerieWorks.require(function (aw, $) {
   var handlerDefaults = {
     once: false
   };
@@ -45,11 +45,9 @@
     }
   }
 
-  constructor.prototype = {
+  aw.define('Event', constructor, {
     addHandler: addHandler,
     removeHandler: removeHandler,
     trigger: trigger
-  };
-
-  aw.Event = constructor;
-})(window.aerieWorks, window.jQuery);
+  });
+});

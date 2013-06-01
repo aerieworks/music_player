@@ -1,5 +1,8 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.vendor', [
+   'aerieWorks.log',
+   'aerieWorks.OneTimeTrigger'
+  ], function (aw) {
   var isClientLoaded = false;
   var clientTrigger = new aw.OneTimeTrigger({
     name: 'aw.google.client',
@@ -98,9 +101,9 @@
     isClientLoaded = true;
   };
 
-  aw.vendor.google = {
+  aw.vendor.define('google', {
     api: getApiTrigger,
     authorization: authorizationTrigger,
     execute: execute
-  };
-})(window.aerieWorks);
+  });
+});

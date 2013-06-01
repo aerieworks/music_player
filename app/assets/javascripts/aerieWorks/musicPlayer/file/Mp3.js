@@ -1,5 +1,10 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer.file', [
+   'aerieWorks.log',
+   'aerieWorks.musicPlayer.file.AudioFile',
+   'aerieWorks.musicPlayer.metadata.Id3v1Reader',
+   'aerieWorks.musicPlayer.metadata.Id3v2Reader'
+  ], function (aw) {
   // Constructor
   function mp3(file) {
     var reader;
@@ -69,5 +74,5 @@
   mp3.prototype = new aw.musicPlayer.file.AudioFile();
   mp3.prototype.getDisplayName = getDisplayName;
 
-  aw.musicPlayer.file.Mp3 = mp3;
-})(window.aerieWorks);
+  aw.musicPlayer.file.define('Mp3', mp3);
+});

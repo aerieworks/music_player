@@ -1,5 +1,5 @@
 "use strict";
-(function (aw, $) {
+aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
   var State = {
     Unknown: 0,
     Blocked: 1,
@@ -154,10 +154,8 @@
     }
   }
 
-  constructor.prototype = {
+  aw.define('OneTimeTrigger', constructor, {
     require: require,
     when: when
-  };
-
-  aw.OneTimeTrigger = constructor;
-})(window.aerieWorks, window.jQuery);
+  });
+});

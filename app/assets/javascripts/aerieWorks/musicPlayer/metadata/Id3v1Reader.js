@@ -1,5 +1,7 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
+   'aerieWorks.log'
+  ], function (aw) {
   // Constructor
   function id3v1Reader() {
     this.album = null;
@@ -46,9 +48,7 @@
     }
   }
 
-  id3v1Reader.prototype = {
+  aw.musicPlayer.metadata.define('Id3v1Reader', id3v1Reader, {
     readTags: readTags
-  };
-
-  aw.musicPlayer.metadata.Id3v1Reader = id3v1Reader;
-})(window.aerieWorks);
+  });
+});

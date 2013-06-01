@@ -1,5 +1,5 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.io', [ 'aerieWorks.log' ], function (aw) {
     var readerQueue = [];
 
     // Private static methods
@@ -43,9 +43,7 @@
         }
     }
 
-    queuedReader.prototype = {
+    aw.io.define('QueuedReader', queuedReader, {
         readBuffer: readBuffer
-    };
-
-    aw.io.QueuedReader = queuedReader;
-})(window.aerieWorks);
+    });
+});

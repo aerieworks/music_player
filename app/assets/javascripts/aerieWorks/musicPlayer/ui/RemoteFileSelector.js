@@ -1,5 +1,7 @@
 "use strict";
-(function (aw, $) {
+window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
+   'aerieWorks.Event'
+  ], function (aw, $) {
   function constructor(fileSource) {
     this.dialog = null;
     this.fileList = null;
@@ -71,9 +73,7 @@
     this.dialog.dialog('open');
   }
 
-  constructor.prototype = {
+  aw.musicPlayer.ui.define('RemoteFileSelector', constructor, {
     show: show
-  };
-
-  aw.musicPlayer.ui.RemoteFileSelector = constructor;
-})(window.aerieWorks, window.jQuery);
+  });
+});

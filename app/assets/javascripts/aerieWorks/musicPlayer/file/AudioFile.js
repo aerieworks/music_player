@@ -1,5 +1,8 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer.file', [
+   'aerieWorks.log',
+   'aerieWorks.Event'
+  ], function (aw) {
   // Constructor
   function audioFile(file) {
     if (file == null) {
@@ -16,10 +19,6 @@
     return this.filename;
   }
 
-  audioFile.prototype = {
-    getDisplayName: getDisplayName
-  };
-
   // Factory
   audioFile.create = function (file) {
     if (/\.mp3$/.test(file.name)) {
@@ -31,5 +30,7 @@
     }
   }
 
-  aw.musicPlayer.file.AudioFile = audioFile;
-})(window.aerieWorks);
+  aw.musicPlayer.file.define('AudioFile', audioFile, {
+    getDisplayName: getDisplayName
+  });
+});

@@ -1,5 +1,5 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer.ui', function (aw) {
   // Constructor
   function PlayerView(
       player,
@@ -193,5 +193,5 @@
     }
   }
 
-  aw.musicPlayer.ui.PlayerView = PlayerView;
-})(window.aerieWorks);
+  aw.musicPlayer.ui.define('PlayerView', PlayerView);
+});

@@ -1,5 +1,7 @@
 "use strict";
-(function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer', [
+   'aerieWorks.Event'
+  ], function (aw) {
   var nextItemID = 0;
 
   // Constructor
@@ -74,7 +76,7 @@
     }
   }
 
-  playlist.prototype = {
+  aw.musicPlayer.define('Playlist', playlist, {
     addItem: addItem,
     clear: clear,
     isFirstItemSelected: isFirstItemSelected,
@@ -83,7 +85,5 @@
     selectItemById: selectItemByID,
     selectNext: selectNext,
     selectPrevious: selectPrevious
-  };
-
-  aw.musicPlayer.Playlist = playlist;
-})(window.aerieWorks);
+  });
+});
