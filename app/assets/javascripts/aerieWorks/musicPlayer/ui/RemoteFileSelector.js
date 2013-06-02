@@ -58,6 +58,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
         modal: true,
         resizable: false,
         title: 'Add Files From Google Drive',
+        height: 500,
         width: 900,
         buttons: {
           Add: btnAdd_click.bind(this),
