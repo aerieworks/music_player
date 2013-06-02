@@ -1,16 +1,16 @@
 'use strict';
-window.aerieWorks.require('aerieWorks.file', [
+window.aerieWorks.require('aerieWorks.vendor.google.drive', [
     'aerieWorks.log',
     'aerieWorks.OneTimeTrigger',
-    'aerieWorks.vendor.google',
-    'aerieWorks.file.DriveFile'
+    'aerieWorks.vendor.google.Client',
+    'aerieWorks.vendor.google.drive.DriveFile'
   ], function (aw) {
-  var driveTrigger = aw.vendor.google.api('drive', 'v2');
+  var driveTrigger = aw.vendor.google.Client.api('drive', 'v2');
   driveTrigger.require();
 
   var myTrigger = new aw.OneTimeTrigger({
     name: 'aerieWorks.File.DriveFileSource.drive',
-    dependencies: [ driveTrigger, aw.vendor.google.authorization ],
+    dependencies: [ driveTrigger, aw.vendor.google.Client.authorization ],
     hardEvaluate: function (success) { success.call(); }
   });
 
@@ -20,7 +20,7 @@ window.aerieWorks.require('aerieWorks.file', [
         q: "mimeType = '" + mimeType + "'"
       });
 
-      aw.vendor.google.execute(request, function (result) {
+      aw.vendor.google.Client.execute(request, function (result) {
         if (result.items) {
           aw.log.debug('DriveFileSource.getList: ' + result.items.length + ' files of MIME type ' + mimeType + ' found.');
           var files = [];
@@ -30,7 +30,7 @@ window.aerieWorks.require('aerieWorks.file', [
               '\n\tdownloadUrl: ' + result.items[i].downloadUrl +
               '\n\twebContentLink: ' + result.items[i].webContentLink +
               '\n\tfileExtension: ' + result.items[i].fileExtension);
-            files.push(new aw.file.DriveFile(result.items[i]));
+            files.push(new aw.vendor.google.drive.DriveFile(result.items[i]));
           }
 
           callback.call(null, files);
@@ -41,7 +41,7 @@ window.aerieWorks.require('aerieWorks.file', [
     });
   }
 
-  aw.file.define('DriveFileSource', {
+  aw.vendor.google.drive.define('DriveFileSource', {
     getList: getList
   });
 });

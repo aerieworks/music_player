@@ -1,7 +1,8 @@
 'use strict';
-window.aerieWorks.require('aerieWorks.vendor', [
+window.aerieWorks.require('aerieWorks.vendor.google', [
    'aerieWorks.log',
-   'aerieWorks.OneTimeTrigger'
+   'aerieWorks.OneTimeTrigger',
+   'aerieWorks.net.getNetIoRequestQueue'
   ], function (aw) {
   var isClientLoaded = false;
   var clientTrigger = new aw.OneTimeTrigger({
@@ -76,23 +77,60 @@ window.aerieWorks.require('aerieWorks.vendor', [
     return trigger;
   }
 
-  function execute(request, callback) {
-    request.execute(function (response) {
+  function doExecute(googleRequest, successCallback, failureCallback) {
+    aw.log.debug('Google.Client.execute: Queued request started.');
+    googleRequest.execute(function (response) {
       if (response.error) {
         if (response.error.code == 401) {
-          var success = function () { execute(request, callback); };
-          aw.log.info('Google.execute: Authorization expired, reauthorizing.');
-          authorize(false, success, function () {
-            authorize(true, success, function () {
-              aw.log.error('Google.execute: reauthorization failed.');
+          var reauthSuccess = function () { doExecute(googleRequest, successCallback, failureCallback); };
+          aw.log.info('Google.Client.execute: Authorization expired, reauthorizing.');
+          authorize(false, reauthSuccess, function () {
+            authorize(true, reauthSuccess, function () {
+              aw.log.error('Google.Client.execute: reauthorization failed.');
+              failureCallback();
             });
           });
         } else {
-          aw.log.error('Google.execute: request execution error: ' + response.error.message);
+          aw.log.error('Google.Client.execute: request execution error: ' + response.error.message);
+          failureCallback();
         }
       } else {
-        callback(response);
+        successCallback(response);
       }
+    });
+  }
+
+  function execute(request, callback) {
+    aw.net.getNetIoRequestQueue().enqueue({
+      method: doExecute.bind(this, request),
+      success: callback
+    });
+  }
+
+  function doExecuteXhr(args, successCallback, failureCallback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(args.method, args.url, true);
+    xhr.responseType = args.responseType;
+
+    var token = gapi.auth.getToken().access_token;
+    xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
+    var headerNames = Object.keys(args.headers);
+    for (var i = 0; i < headerNames.length; i++) {
+      xhr.setRequestHeader(headerNames[i], args.headers[headerNames[i]]);
+    }
+
+    xhr.onload = function () {
+      successCallback(xhr.response);
+    };
+    xhr.send(null);
+  }
+
+  function executeXhr(args) {
+    aw.net.getNetIoRequestQueue().enqueue({
+      method: doExecuteXhr.bind(this, args),
+      success: args.success,
+      failure: args.failure
     });
   }
 
@@ -101,9 +139,10 @@ window.aerieWorks.require('aerieWorks.vendor', [
     isClientLoaded = true;
   };
 
-  aw.vendor.define('google', {
+  aw.vendor.google.define('Client', {
     api: getApiTrigger,
     authorization: authorizationTrigger,
-    execute: execute
+    execute: execute,
+    executeXhr: executeXhr
   });
 });

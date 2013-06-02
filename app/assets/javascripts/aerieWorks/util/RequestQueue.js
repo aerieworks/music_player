@@ -2,7 +2,7 @@
 window.aerieWorks.require('aerieWorks.util', [
     'aerieWorks.log',
     'aerieWorks.util.Request'
-  ], function (aw) {
+  ], function (aw, $) {
   function RequestQueue(maxConcurrent, defaultTimeout) {
     this.requests = {};
     aw.util.Request.Priority.each((function (value) {
@@ -11,10 +11,9 @@ window.aerieWorks.require('aerieWorks.util', [
     this.activeRequests = [];
     this.maxConcurrent = maxConcurrent;
     this.defaultTimeout = defaultTimeout;
-    this.request_onCompleteHandler = request_onComplete.bind(this);
   }
 
-  function request_onComplete(request) {
+  function request_onComplete(callback, request, result) {
     for (var i = 0; i < this.activeRequests.length; i++) {
       if (this.activeRequests[i].id == request.id) {
         this.activeRequests.splice(i, 1);
@@ -23,6 +22,10 @@ window.aerieWorks.require('aerieWorks.util', [
     }
 
     aw.log.debug('aw.util.RequestQueue: Request completed. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
+
+    if ($.isFunction(callback)) {
+      setTimeout(callback.bind(null, result), 0);
+    }
 
     if (this.canStartRequest()) {
       startNextRequest.call(this);
@@ -74,15 +77,8 @@ window.aerieWorks.require('aerieWorks.util', [
       }
 
       var request = new aw.util.Request(args);
-      if ($.isFunction(args.success)) {
-        request.onSuccess.addHandler(args.success);
-      }
-      request.onSuccess.addHandler(this.request_onCompleteHandler);
-
-      if ($.isFunction(args.failure)) {
-        request.onFailure.addHandler(args.failure);
-      }
-      request.onFailure.addHandler(this.request_onCompleteHandler);
+      request.onSuccess.addHandler(request_onComplete.bind(this, args.success));
+      request.onFailure.addHandler(request_onComplete.bind(this, args.failure));
 
       this.requests[request.priority].push(request);
       aw.log.debug('aw.util.RequestQueue: Request enqueued. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');

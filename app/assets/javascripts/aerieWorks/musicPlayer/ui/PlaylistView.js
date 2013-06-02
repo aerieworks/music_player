@@ -1,8 +1,8 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
    'aerieWorks.log',
-   'aerieWorks.file.DriveFileSource',
-   'aerieWorks.file.LocalFile',
+   'aerieWorks.vendor.google.drive.DriveFileSource',
+   'aerieWorks.io.LocalFile',
    'aerieWorks.musicPlayer.file.AudioFile',
    'aerieWorks.musicPlayer.ui.RemoteFileSelector'
   ], function (aw, $) {
@@ -36,7 +36,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   // DOM event handlers
   function btnAddDriveFilesClicked(ev) {
     if (this.driveFileSelector == null) {
-      this.driveFileSelector = new aw.musicPlayer.ui.RemoteFileSelector(aw.file.DriveFileSource);
+      this.driveFileSelector = new aw.musicPlayer.ui.RemoteFileSelector(aw.vendor.google.drive.DriveFileSource);
       this.driveFileSelector.onFilesSelected.addHandler(addDriveFiles.bind(this));
     }
 
@@ -51,7 +51,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
     if (ev.target.files != null) {
       var files = [];
       for (var i = 0; i < ev.target.files.length; i++) {
-        files.push(new aw.file.LocalFile(ev.target.files[i]));
+        files.push(new aw.io.LocalFile(ev.target.files[i]));
       }
 
       addFiles(this, files);
