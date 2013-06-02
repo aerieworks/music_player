@@ -24,14 +24,19 @@
 <%= render "remote_file_selector" %>
 
 <% content_for :javascript do %>
-  <script type="text/javascript">
+<script type="text/javascript">
 'use strict';
-  $(function() {
-    var mp = window.aerieWorks.musicPlayer;
-    var playlist = new mp.Playlist();
-    var player = new mp.Player(playlist);
+window.aerieWorks.require([
+    'aerieWorks.musicPlayer.Playlist',
+    'aerieWorks.musicPlayer.Player',
+    'aerieWorks.musicPlayer.ui.PlayerView',
+    'aerieWorks.musicPlayer.ui.PlaylistView'
+  ], function (aw, $) {
+    $(function() {
+    var playlist = new aw.musicPlayer.Playlist();
+    var player = new aw.musicPlayer.Player(playlist);
 
-    var playerView = new mp.ui.PlayerView(
+    var playerView = new aw.musicPlayer.ui.PlayerView(
       player,
       playlist,
       $('#positionTracker'),
@@ -41,12 +46,13 @@
       $('#btnNext'),
       $('#btnPlayPause'));
 
-    var playlistView = new mp.ui.PlaylistView(
+    var playlistView = new aw.musicPlayer.ui.PlaylistView(
       playlist,
       $('#playlist'),
       $('#btnAddDriveFiles'),
       $('#fileSelector'),
       $('#btnRemoveAllFiles'));
   });
-  </script>
+});
+</script>
 <% end %>
