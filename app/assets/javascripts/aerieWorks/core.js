@@ -40,9 +40,10 @@
         if (prototype != null) {
           this[typeName].prototype = prototype;
         }
-        console.log('aerieWorks.Namespace: Defined type ' + this.fullName + '.' + typeName);
+        definition.typeName = this.fullName + '.' + typeName;
+        console.log('aerieWorks.Namespace: Defined type ' + definition.typeName);
 
-        var requirers = typeRequirers[this.fullName + '.' + typeName];
+        var requirers = typeRequirers[definition.typeName];
         if (requirers != null) {
           while (requirers.length > 0) {
             var req = requirers.shift();

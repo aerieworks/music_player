@@ -2,10 +2,12 @@
 window.aerieWorks.require('aerieWorks.vendor.google.drive', [
     'aerieWorks.log',
     'aerieWorks.OneTimeTrigger',
+    'aerieWorks.io.FileSource',
     'aerieWorks.vendor.google.Client',
     'aerieWorks.vendor.google.drive.DriveFile'
   ], function (aw) {
   var driveTrigger = aw.vendor.google.Client.api('drive', 'v2');
+  var sourceId = null;
   driveTrigger.require();
 
   var myTrigger = new aw.OneTimeTrigger({
@@ -44,4 +46,5 @@ window.aerieWorks.require('aerieWorks.vendor.google.drive', [
   aw.vendor.google.drive.define('DriveFileSource', {
     getList: getList
   });
+  sourceId = aw.io.FileSource.registerSource(aw.vendor.google.drive.DriveFileSource);
 });
