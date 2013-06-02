@@ -1,5 +1,6 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.file', [
+    'aerieWorks.log',
     'aerieWorks.util.RequestQueue'
   ], function (aw) {
   var urlApi = window.URL || window.webkitURL;
@@ -12,11 +13,11 @@ window.aerieWorks.require('aerieWorks.file', [
     this.type = file.type;
   }
 
-  function fileReader_load(requestCallback, bufferCallback, ev) {
+  function fileReader_load(bufferCallback, requestCallback, ev) {
     aw.log.debug('aw.file.LocalFile: Finished reading ' + this.name + ' from disk.');
     this.buffer = ev.target.result;
     requestCallback(ev.target.result);
-    bufferCallback(buffer);
+    bufferCallback(this.buffer);
   }
 
   function getUrl() {
@@ -32,14 +33,13 @@ window.aerieWorks.require('aerieWorks.file', [
 
   function read(suggestedSize, callback) {
     if (this.buffer) {
+      aw.log.debug('aw.file.LocalFile: File ' + this.name + ' already read from disk, calling back immediately.');
       callback(this.buffer);
       return;
     }
 
-    var request = {
-      method: startRead.bind(this, callback);
-    };
-    ioQueue.enqueue(request);
+    aw.log.debug('aw.file.LocalFile: File queuing request to read ' + this.name + ' from disk.');
+    ioQueue.enqueue(startRead.bind(this, callback));
   }
 
   aw.file.define('LocalFile', constructor, {

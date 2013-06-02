@@ -22,6 +22,8 @@ window.aerieWorks.require('aerieWorks.util', [
       }
     }
 
+    aw.log.debug('aw.util.RequestQueue: Request completed. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
+
     if (this.canStartRequest()) {
       startNextRequest.call(this);
     }
@@ -32,7 +34,9 @@ window.aerieWorks.require('aerieWorks.util', [
     aw.util.Request.Priority.reverseEach(function (priority) {
       if (me.requests[priority].length > 0) {
         var request = me.requests[priority].shift();
+        me.activeRequests.push(request);
         request.start();
+        aw.log.debug('aw.util.RequestQueue: Request started. ' + me.getActiveCount() + ' of ' + me.maxConcurrent + ' now in progress.  ' + me.getPendingCount() + ' pending.');
         return false;
       }
     });
@@ -41,6 +45,20 @@ window.aerieWorks.require('aerieWorks.util', [
   aw.util.define('RequestQueue', RequestQueue, {
     canStartRequest: function () {
       return this.activeRequests.length < this.maxConcurrent;
+    },
+
+    getActiveCount: function () {
+      return this.activeRequests.length;
+    },
+
+    getPendingCount: function () {
+      var me = this;
+      var count = 0;
+      aw.util.Request.Priority.each(function (priority) {
+        count += me.requests[priority].length;
+      });
+
+      return count;
     },
 
     enqueue: function (args) {
@@ -67,6 +85,7 @@ window.aerieWorks.require('aerieWorks.util', [
       request.onFailure.addHandler(this.request_onCompleteHandler);
 
       this.requests[request.priority].push(request);
+      aw.log.debug('aw.util.RequestQueue: Request enqueued. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
       if (this.canStartRequest()) {
         startNextRequest.call(this);
       }
