@@ -1,9 +1,6 @@
 'use strict';
-window.aerieWorks.require('aerieWorks.util', [
-    'aerieWorks.log',
-    'aerieWorks.Enum'
-  ], function (aw, $) {
-  var Priority = new aw.Enum([
+window.aerieWorks.require('aerieWorks.util', [ 'aerieWorks.Enum' ], function (aw, $) {
+  var Priority = aw.Enum.create([
     // Requests that are loading/syncing data that is not immediately asked for, but is expected to be needed.
     'PreFetch',
     // Requests that have been specifically asked for, but are not required for the user's workflow (e.g. loading file metadata).
@@ -18,8 +15,8 @@ window.aerieWorks.require('aerieWorks.util', [
     this.id = nextRequestId++;
     this.priority = Priority.Normal;
     this.requestTimer = null;
-    this.onSuccess = new aw.Event();
-    this.onFailure = new aw.Event();
+    this.onSuccess = aw.Event.create();
+    this.onFailure = aw.Event.create();
 
     if ($.isFunction(args)) {
       this.method = args;
@@ -49,13 +46,20 @@ window.aerieWorks.require('aerieWorks.util', [
     }
   }
 
-  Request.Priority = Priority;
-  aw.util.define('Request', Request, {
-    start: function () {
-      this.method.call(null, method_onSuccess.bind(this), method_onFailure.bind(this));
-      if (this.timeout != null) {
-        this.requestTimer = setTimeout(method_onFailure.bind(this), this.timeout);
+  aw.Type.create({
+    name: 'Request',
+    namespace: aw.util,
+    initializer: Request,
+    members: {
+      start: function () {
+        this.method.call(null, method_onSuccess.bind(this), method_onFailure.bind(this));
+        if (this.timeout != null) {
+          this.requestTimer = setTimeout(method_onFailure.bind(this), this.timeout);
+        }
       }
+    },
+    statics: {
+      Priority: Priority
     }
   });
 });

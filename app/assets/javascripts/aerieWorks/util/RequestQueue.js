@@ -1,6 +1,5 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.util', [
-    'aerieWorks.log',
     'aerieWorks.util.Request'
   ], function (aw, $) {
   function RequestQueue(maxConcurrent, defaultTimeout) {
@@ -21,7 +20,7 @@ window.aerieWorks.require('aerieWorks.util', [
       }
     }
 
-    aw.log.debug('aw.util.RequestQueue: Request completed. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
+    this.debug('Request completed. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
 
     if ($.isFunction(callback)) {
       setTimeout(callback.bind(null, result), 0);
@@ -39,54 +38,59 @@ window.aerieWorks.require('aerieWorks.util', [
         var request = me.requests[priority].shift();
         me.activeRequests.push(request);
         request.start();
-        aw.log.debug('aw.util.RequestQueue: Request started. ' + me.getActiveCount() + ' of ' + me.maxConcurrent + ' now in progress.  ' + me.getPendingCount() + ' pending.');
+        me.debug('Request started. ' + me.getActiveCount() + ' of ' + me.maxConcurrent + ' now in progress.  ' + me.getPendingCount() + ' pending.');
         return false;
       }
     });
   }
 
-  aw.util.define('RequestQueue', RequestQueue, {
-    canStartRequest: function () {
-      return this.activeRequests.length < this.maxConcurrent;
-    },
+  aw.Type.create({
+    name: 'RequestQueue',
+    namespace: aw.util,
+    initializer: RequestQueue,
+    members: {
+      canStartRequest: function () {
+        return this.activeRequests.length < this.maxConcurrent;
+      },
 
-    getActiveCount: function () {
-      return this.activeRequests.length;
-    },
+      getActiveCount: function () {
+        return this.activeRequests.length;
+      },
 
-    getPendingCount: function () {
-      var me = this;
-      var count = 0;
-      aw.util.Request.Priority.each(function (priority) {
-        count += me.requests[priority].length;
-      });
+      getPendingCount: function () {
+        var me = this;
+        var count = 0;
+        aw.util.Request.Priority.each(function (priority) {
+          count += me.requests[priority].length;
+        });
 
-      return count;
-    },
+        return count;
+      },
 
-    enqueue: function (args) {
-      if ($.isFunction(args)) {
-        args = { method: args };
+      enqueue: function (args) {
+        if ($.isFunction(args)) {
+          args = { method: args };
+        }
+
+        if (args.timeout == null) {
+          args.timeout = this.defaultTimeout;
+        }
+        if (args.priority == null) {
+          args.priority = aw.util.Request.Priority.Normal;
+        }
+
+        var request = aw.util.Request.create(args);
+        request.onSuccess.addHandler(request_onComplete.bind(this, args.success));
+        request.onFailure.addHandler(request_onComplete.bind(this, args.failure));
+
+        this.requests[request.priority].push(request);
+        this.debug('Request enqueued. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
+        if (this.canStartRequest()) {
+          startNextRequest.call(this);
+        }
+
+        return request.id;
       }
-
-      if (args.timeout == null) {
-        args.timeout = this.defaultTimeout;
-      }
-      if (args.priority == null) {
-        args.priority = aw.util.Request.Priority.Normal;
-      }
-
-      var request = new aw.util.Request(args);
-      request.onSuccess.addHandler(request_onComplete.bind(this, args.success));
-      request.onFailure.addHandler(request_onComplete.bind(this, args.failure));
-
-      this.requests[request.priority].push(request);
-      aw.log.debug('aw.util.RequestQueue: Request enqueued. ' + this.getActiveCount() + ' of ' + this.maxConcurrent + ' now in progress.  ' + this.getPendingCount() + ' pending.');
-      if (this.canStartRequest()) {
-        startNextRequest.call(this);
-      }
-
-      return request.id;
     }
   });
 });

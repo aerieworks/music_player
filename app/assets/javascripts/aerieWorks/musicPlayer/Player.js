@@ -1,6 +1,5 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer', [
-   'aerieWorks.log',
    'aerieWorks.Event'
   ], function (aw) {
   // Constructor
@@ -10,9 +9,9 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
 
     this.audio = audioNode[0];
 
-    this.onPlaybackStarted = new aw.Event();
-    this.onPlaybackStopped = new aw.Event();
-    this.onPlaybackPaused = new aw.Event();
+    this.onPlaybackStarted = aw.Event.create();
+    this.onPlaybackStopped = aw.Event.create();
+    this.onPlaybackPaused = aw.Event.create();
 
     audioNode.bind('play', playbackStarted.bind(this));
     audioNode.bind('pause', playbackPaused.bind(this));
@@ -21,12 +20,12 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
 
   // DOM event handlers
   function playbackStarted(ev) {
-    aw.log.debug('aw.musicPlayer.Player.playbackStarted: Received DOM "play" event.');
+    this.debug('Received DOM "play" event.');
     this.onPlaybackStarted.trigger();
   }
 
   function playbackStopped(ev) {
-    aw.log.debug('Received DOM "ended" event.');
+    this.debug('Received DOM "ended" event.');
     // DOM events don't seem to fire if we replay after the track finishes.
     // Reassigning the audio source seems to fix this glitch.
     this.audio.src = this.audio.src;
@@ -34,7 +33,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
   }
 
   function playbackPaused(ev) {
-    aw.log.debug('Received DOM "paused" event.');
+    this.debug('Received DOM "paused" event.');
     this.onPlaybackPaused.trigger();
   }
 
@@ -60,7 +59,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
   }
 
   function pause() {
-    aw.log.debug('aw.musicPlayer.Player.pause: Calling DOM::audio.pause().');
+    this.debug('Calling DOM::audio.pause().');
     this.audio.pause();
   }
 
@@ -68,7 +67,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
     if (this.isStopped()) {
       this.setCurrentPosition(0);
     }
-    aw.log.debug('aw.musicPlayer.Player.play: Calling DOM::audio.play().');
+    this.debug('Calling DOM::audio.play().');
     this.audio.play();
   }
 
@@ -80,7 +79,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
     var wasPlaying = this.isPlaying();
 
     this.audio.src = audioFile.url;
-    aw.log.debug('aw.musicPlayer.Player.setFile: set to "' + audioFile.getDisplayName() + '"');
+    this.debug('set to "' + audioFile.getDisplayName() + '"');
 
     if (wasPlaying) {
       this.play();
@@ -88,22 +87,27 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
   }
 
   function stop() {
-    aw.log.debug('aw.musicPlayer.Player.stop: called.');
+    this.debug('Stop called.');
     this.audio.pause();
     this.setCurrentPosition(0);
     this.audio.src = null;
   }
 
-  aw.musicPlayer.define('Player', player, {
-    getCurrentPosition: getCurrentPosition,
-    getDuration: getDuration,
-    isPaused: isPaused,
-    isPlaying: isPlaying,
-    isStopped: isStopped,
-    pause: pause,
-    play: play,
-    setCurrentPosition: setCurrentPosition,
-    setFile: setFile,
-    stop: stop
+  aw.Type.create({
+    name: 'Player',
+    namespace: aw.musicPlayer,
+    initializer: player,
+    members: {
+      getCurrentPosition: getCurrentPosition,
+      getDuration: getDuration,
+      isPaused: isPaused,
+      isPlaying: isPlaying,
+      isStopped: isStopped,
+      pause: pause,
+      play: play,
+      setCurrentPosition: setCurrentPosition,
+      setFile: setFile,
+      stop: stop
+    }
   });
 });

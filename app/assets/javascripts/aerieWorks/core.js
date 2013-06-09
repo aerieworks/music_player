@@ -3,8 +3,55 @@
   var typeRequirers = {};
   var AwObject;
   var Type;
+  var LogLevel = {
+    Debug: 0,
+    Info: 1,
+    Warn: 2,
+    Error: 3
+  };
+  var logLevelNames = [ 'DEBUG', 'INFO', 'WARN', 'ERROR' ];
+  var loggingLevel = LogLevel.Debug;
 
   (function () {
+    var hasStack = (new Error()).stack != null;
+    var stackRe = hasStack && /^\s*at\s+(?:(\S+)\s+\()?(\S+):(\d+):(\d+)\)?$/;
+
+    function resolveCaller() {
+      var stack = (new Error()).stack.split('\n');
+      if (stack.length >= 4) {
+        var partsMatch = stackRe.exec(stack[4]);
+        if (partsMatch && partsMatch[1] != null) {
+          var lastFunctionStart = partsMatch[1].lastIndexOf('.');
+          return '::' + partsMatch[1].substring(lastFunctionStart + 1) + ':' + partsMatch[3];
+        }
+      }
+
+      return '';
+    }
+
+    function log(level, message) {
+      if (window.console != null && typeof window.console.log == 'function' && level >= loggingLevel) {
+        if (typeof message !== 'string') {
+          window.console.log(message);
+          return;
+        }
+
+        var now = new Date();
+        var fullMessage = [
+          now.toString(),
+          '[' + logLevelNames[level] + ']',
+          this.getType().getFullName() + (hasStack ? resolveCaller() : '') + ':'
+        ];
+
+        if (this.getLogMessagePrefix) {
+          fullMessage.push(this.getLogMessagePrefix());
+        }
+        fullMessage.push(message);
+
+        window.console.log(fullMessage.join(' '));
+      }
+    }
+
     function inherit(o) {
       function F() {}
       F.prototype = o;
@@ -29,6 +76,22 @@
     }
 
     var awObjectMembers = {
+      debug: function (message) {
+        log.call(this, LogLevel.Debug, message);
+      },
+
+      info: function (message) {
+        log.call(this, LogLevel.Info, message);
+      },
+
+      warn: function (message) {
+        log.call(this, LogLevel.Warn, message);
+      },
+
+      error: function (message) {
+        log.call(this, LogLevel.Error, message);
+      },
+
       getType: function () {
         return this.type;
       }
@@ -85,7 +148,7 @@
             var nsEndIndex = dep.lastIndexOf('.');
             var depNamespace = Namespace.get(dep.substring(0, nsEndIndex), true);
             if (depNamespace == null || !depNamespace.isDefined(dep.substring(nsEndIndex + 1))) {
-              console.log('Found pending dependency on ' + dep + '.');
+              this.debug('Found pending dependency on ' + dep + '.');
               requirer.remaining += 1;
 
               if (typeRequirers[dep] == null) {
@@ -104,12 +167,36 @@
 
     Type = inherit(typeMembers);
     Type.initializer = function (args) {
-      this.initializer = args.initializer || null;
       this.namespace = args.namespace || null;
       this.name = args.name;
+      if (this.namespace) {
+        if (this.namespace[this.name] != null) {
+          throw 'Type "' + this.name + '" already defined in namespace ' + this.namespace.getFullName() + '.';
+        }
+        this.namespace[this.name] = this;
+      }
+
+      this.initializer = args.initializer || null;
       this.baseType = args.baseType || AwObject;
       this.members = this.baseType ? $.extend(inherit(this.baseType.members), args.members) : args.members;
       $.extend(this, args.statics);
+
+      this.debug('Defined type ' + this.getFullName());
+
+      if (args.onCreated) {
+        args.onCreated.call(this);
+      }
+
+      var requirers = typeRequirers[this.getFullName()];
+      if (requirers != null) {
+        while (requirers.length > 0) {
+          var req = requirers.shift();
+          req.remaining -= 1;
+          if (req.remaining == 0) {
+            Type.require(req.fn);
+          }
+        }
+      }
     };
     initializeInstance(Type, Type, [{
       initializer: Type.initializer,
@@ -119,7 +206,13 @@
 
     AwObject = Type.create({
       members: awObjectMembers,
-      name: 'AwObject'
+      name: 'AwObject',
+      statics: {
+        debug: awObjectMembers.debug,
+        info: awObjectMembers.info,
+        warn: awObjectMembers.warn,
+        error: awObjectMembers.error
+      }
     });
 
     Type.baseType = AwObject;
@@ -148,45 +241,12 @@
           this.fullName = this.name;
         }
 
-        console.log('aerieWorks.Namespace: Created namespace ' + this.getFullName());
+        this.debug('Created namespace ' + this.getFullName());
       },
 
       members: {
         createNamespace: function (name) {
           return Namespace.create(this, name);
-        },
-
-        define: function (typeName, definition, prototype) {
-          if ($.isPlainObject(typeName)) {
-            var typeMap = typeName;
-            var typeNames = Object.keys(typeMap);
-            for (var i = 0; i < typeNames.length; i++) {
-              this.define(typeNames[i], typeMap[typeNames[i]]);
-            }
-            return;
-          }
-
-          if (this[typeName] != null) {
-            throw 'Type "' + typeName + '" already defined in namespace ' + this.getFullName() + '.';
-          }
-
-          this[typeName] = definition;
-          if (prototype != null) {
-            this[typeName].prototype = prototype;
-          }
-          definition.typeName = this.getFullName() + '.' + typeName;
-          console.log('aerieWorks.Namespace: Defined type ' + definition.typeName);
-
-          var requirers = typeRequirers[definition.typeName];
-          if (requirers != null) {
-            while (requirers.length > 0) {
-              var req = requirers.shift();
-              req.remaining -= 1;
-              if (req.remaining == 0) {
-                Type.require(req.fn);
-              }
-            }
-          }
         },
 
         getFullName: function () {

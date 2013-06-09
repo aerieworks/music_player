@@ -1,5 +1,5 @@
 'use strict';
-window.aerieWorks.require('aerieWorks.io', [ 'aerieWorks.log' ], function (aw) {
+window.aerieWorks.require('aerieWorks.io', function (aw) {
     // Constructor
     function ForwardReader(view) {
         this.view = view;
@@ -23,7 +23,7 @@ window.aerieWorks.require('aerieWorks.io', [ 'aerieWorks.log' ], function (aw) {
     function readByte() {
         var b = this.view[this.index];
         if (b == null || b == undefined) {
-          aw.log.warn('ForwardReader.readByte: got null byte at index ' + this.index);
+          this.warn('got null byte at index ' + this.index);
         }
 
         this.index += 1;
@@ -49,11 +49,16 @@ window.aerieWorks.require('aerieWorks.io', [ 'aerieWorks.log' ], function (aw) {
         return readUint(this, 4, 8);
     }
 
-    aw.io.define('ForwardReader', ForwardReader, {
+    aw.Type.create({
+      name: 'ForwardReader',
+      namespace: aw.io,
+      initializer: ForwardReader,
+      members: {
         getRemainingBytes: getRemainingBytes,
         readByte: readByte,
         readBytes: readBytes,
         readSyncsafeInt: readSyncsafeInt,
         readUint32: readUint32
+      }
     });
 });

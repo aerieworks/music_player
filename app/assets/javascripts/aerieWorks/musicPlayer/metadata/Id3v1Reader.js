@@ -1,7 +1,5 @@
 'use strict';
-window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
-   'aerieWorks.log'
-  ], function (aw) {
+window.aerieWorks.require('aerieWorks.musicPlayer.metadata', function (aw) {
   // Constructor
   function id3v1Reader() {
     this.album = null;
@@ -36,7 +34,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
   // Public methods
   function readTags(buffer) {
     var tag = new Uint8Array(buffer, buffer.byteLength - 128);
-    aw.log.debug('aw.musicPlayer.metadata.Id3v1Reader.readTags: reading tags.');
+    this.debug('reading tags.');
     if ('TAG' == tag.getString(0, 3)) {
       this.title = readTextFrame(this, tag, 3, 30);
       this.artist = readTextFrame(this, tag, 33, 30);
@@ -48,7 +46,12 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
     }
   }
 
-  aw.musicPlayer.metadata.define('Id3v1Reader', id3v1Reader, {
-    readTags: readTags
+  aw.Type.create({
+    name: 'Id3v1Reader',
+    namespace: aw.musicPlayer.metadata,
+    initializer: id3v1Reader,
+    members: {
+      readTags: readTags
+    }
   });
 });

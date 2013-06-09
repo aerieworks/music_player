@@ -193,5 +193,9 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', function (aw) {
     }
   }
 
-  aw.musicPlayer.ui.define('PlayerView', PlayerView);
+  aw.Type.create({
+    name: 'PlayerView',
+    namespace: aw.musicPlayer.ui,
+    initializer: PlayerView
+  });
 });

@@ -9,9 +9,9 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
     this.items = [];
     this.selectedIndex = null;
 
-    this.onCleared = new aw.Event();
-    this.onItemAdded = new aw.Event();
-    this.onItemSelected = new aw.Event();
+    this.onCleared = aw.Event.create();
+    this.onItemAdded = aw.Event.create();
+    this.onItemSelected = aw.Event.create();
   }
 
   // Private methods
@@ -76,14 +76,19 @@ window.aerieWorks.require('aerieWorks.musicPlayer', [
     }
   }
 
-  aw.musicPlayer.define('Playlist', playlist, {
-    addItem: addItem,
-    clear: clear,
-    isFirstItemSelected: isFirstItemSelected,
-    isLastItemSelected: isLastItemSelected,
-    selectItem: selectItem,
-    selectItemById: selectItemByID,
-    selectNext: selectNext,
-    selectPrevious: selectPrevious
+  aw.Type.create({
+    name: 'Playlist',
+    namespace: aw.musicPlayer,
+    initializer: playlist,
+    members: {
+      addItem: addItem,
+      clear: clear,
+      isFirstItemSelected: isFirstItemSelected,
+      isLastItemSelected: isLastItemSelected,
+      selectItem: selectItem,
+      selectItemById: selectItemByID,
+      selectNext: selectNext,
+      selectPrevious: selectPrevious
+    }
   });
 });

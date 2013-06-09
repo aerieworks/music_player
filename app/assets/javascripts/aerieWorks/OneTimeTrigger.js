@@ -1,5 +1,5 @@
 'use strict';
-aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
+window.aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
   var State = {
     Unknown: 0,
     Blocked: 1,
@@ -30,10 +30,10 @@ aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
     this.requiresEvaluation = false;
 
     this.state = State.Unknown;
-    this.onSuccess = new aw.Event();
+    this.onSuccess = aw.Event.create();
 
     if (this.notifyOnFailure) {
-      this.onFailure = new aw.Event();
+      this.onFailure = aw.Event.create();
     } else {
       this.onFailure = null;
     }
@@ -42,23 +42,23 @@ aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
       execSoftEvaluate(this);
     } else {
       for (var i = 0; i < this.dependencies.length; i++) {
-        aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Depends on ' + this.dependencies[i].name + '.');
+        this.debug('Depends on ' + this.dependencies[i].name + '.');
       }
     }
 
-    aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Created.');
+    this.debug('Created.');
   }
 
   function execSoftEvaluate(me) {
     if ($.isFunction(me.softEvaluate)) {
-      aw.log.debug('aerieWorks.OneTimeTrigger: [' + me.name + '] Soft evaluating.');
+      me.debug('Soft evaluating.');
       me.state = State.Evaluating;
       me.softEvaluate.call(null, onEvaluateSuccess.bind(me), onSoftEvaluateFailure.bind(me));
     }
   }
 
   function execHardEvaluate(me) {
-    aw.log.debug('aerieWorks.OneTimeTrigger: [' + me.name + '] Hard evaluating.');
+    me.debug('Hard evaluating.');
     me.state = State.Evaluating;
     me.hardEvaluate.call(null, onEvaluateSuccess.bind(me), onHardEvaluateFailure.bind(me));
   }
@@ -73,7 +73,7 @@ aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
       return;
     }
 
-    aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Dependency ' + dependency.name + ' met.');
+    this.debug('Dependency ' + dependency.name + ' met.');
     var index = this.dependencies.indexOf(dependency);
     if (index >= 0) {
       this.dependencies.splice(index, 1);
@@ -89,13 +89,13 @@ aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
   }
 
   function onEvaluateSuccess() {
-    aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Successful evaluation.');
+    this.debug('Successful evaluation.');
     this.state = State.Success;
     this.onSuccess.trigger(this);
   }
 
   function onSoftEvaluateFailure() {
-    aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Failed soft evaluation.');
+    this.debug('Failed soft evaluation.');
     if (this.requiresEvaluation) {
       execHardEvaluate(this);
     } else {
@@ -104,7 +104,7 @@ aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
   }
 
   function onHardEvaluateFailure() {
-    aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Failed hard evaluation.');
+    this.debug('Failed hard evaluation.');
     this.state = State.Failure;
     if (this.notifyOnFailure) {
       this.onFailure.trigger(this);
@@ -138,24 +138,32 @@ aerieWorks.require([ 'aerieWorks.Event' ], function (aw, $) {
 
     if (this.state === State.Unknown) {
       if (hasDependencies(this)) {
-        aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Required, but has ' + this.dependencies.length + ' dependencies.');
+        this.debug('Required, but has ' + this.dependencies.length + ' dependencies.');
         var successCallback = onDependencySuccess.bind(this);
         var failureCallback = onHardEvaluateFailure.bind(this);
 
         this.state = State.Blocked;
         for (var i = 0; i < this.dependencies.length; i++) {
-          aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Requiring ' + this.dependencies[i].name + '.');
+          this.debug('Requiring ' + this.dependencies[i].name + '.');
           this.dependencies[i].require(successCallback, failureCallback);
         }
       } else {
-        aw.log.debug('aerieWorks.OneTimeTrigger: [' + this.name + '] Required, no dependencies.');
+        this.debug('Required, no dependencies.');
         execHardEvaluate(this);
       }
     }
   }
 
-  aw.define('OneTimeTrigger', constructor, {
-    require: require,
-    when: when
+  aw.Type.create({
+    name: 'OneTimeTrigger',
+    namespace: aw,
+    initializer: constructor,
+    members: {
+      getLogMessagePrefix: function () {
+        return '[' + this.name + ']';
+      },
+      require: require,
+      when: when
+    }
   });
 });

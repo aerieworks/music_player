@@ -8,7 +8,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
     this.selectedFiles = [];
 
     this.fileSource = fileSource;
-    this.onFilesSelected = new aw.Event();
+    this.onFilesSelected = aw.Event.create();
   }
 
   function btnAdd_click(ev, ui) {
@@ -74,7 +74,12 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
     this.dialog.dialog('open');
   }
 
-  aw.musicPlayer.ui.define('RemoteFileSelector', constructor, {
-    show: show
+  aw.Type.create({
+    name: 'RemoteFileSelector',
+    namespace: aw.musicPlayer.ui,
+    initializer: constructor,
+    members: {
+      show: show
+    }
   });
 });

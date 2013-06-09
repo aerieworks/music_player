@@ -1,36 +1,33 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.file', [
-   'aerieWorks.log',
-   'aerieWorks.Event'
+   'aerieWorks.Event',
+   'aerieWorks.musicPlayer.file.AudioFileFactory'
   ], function (aw) {
-  // Constructor
-  function audioFile(file) {
-    if (file == null) {
-      return;
+
+  aw.Type.create({
+    name: 'AudioFile',
+    namespace: aw.musicPlayer.file,
+
+    initializer: function (file) {
+      this.debug('AudioFile initializer: ' + (file ? file.name : '<null>'));
+      if (file == null) {
+        return;
+      }
+
+      this.file = file;
+      this.url = file.getUrl();
+      this.filename = file.name;
+      this.onFileChanged = aw.Event.create();
+    },
+
+    members: {
+      getDisplayName: function () {
+        return this.filename;
+      }
+    },
+
+    onCreated: function () {
+      aw.musicPlayer.file.AudioFileFactory.registerDefaultFileType(this);
     }
-
-    this.file = file;
-    this.url = file.getUrl();
-    this.filename = file.name;
-    this.onFileChanged = new aw.Event();
-  }
-
-  function getDisplayName() {
-    return this.filename;
-  }
-
-  // Factory
-  audioFile.create = function (file) {
-    if (/\.mp3$/.test(file.name)) {
-      aw.log.debug('aw.musicPlayer.file.AudioFile.create: creating mp3 from ' + file.name);
-      return new aw.musicPlayer.file.Mp3(file);
-    } else {
-      aw.log.debug('aw.musicPlayer.file.AudioFile.create: creating audioFile from ' + file.name);
-      return new aw.musicPlayer.file.AudioFile(file);
-    }
-  }
-
-  aw.musicPlayer.file.define('AudioFile', audioFile, {
-    getDisplayName: getDisplayName
   });
 });

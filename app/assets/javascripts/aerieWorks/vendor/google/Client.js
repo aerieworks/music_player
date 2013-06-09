@@ -1,24 +1,23 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.vendor.google', [
-   'aerieWorks.log',
    'aerieWorks.OneTimeTrigger',
-   'aerieWorks.net.getNetIoRequestQueue'
+   'aerieWorks.util.RequestQueueFactory'
   ], function (aw) {
   var isClientLoaded = false;
-  var clientTrigger = new aw.OneTimeTrigger({
+  var clientTrigger = aw.OneTimeTrigger.create({
     name: 'aw.google.client',
     hardEvaluate: function(success) {
       if (isClientLoaded) {
-        aw.log.debug('Google: Client required and loaded.');
+        aw.vendor.google.Client.debug('Client required and loaded.');
         success.call(null);
       } else {
-        aw.log.debug('Google: Client required, but not loaded yet.');
+        aw.vendor.google.Client.debug('Client required, but not loaded yet.');
         window.aerieWorks_vendor_google_onClientLoad = success;
       }
     }
   });
 
-  var authorizationTrigger = new aw.OneTimeTrigger({
+  var authorizationTrigger = aw.OneTimeTrigger.create({
     name: 'aw.google.authorization',
     dependencies: [ clientTrigger ],
     softEvaluate: function (success, failure) {
@@ -35,20 +34,20 @@ window.aerieWorks.require('aerieWorks.vendor.google', [
   var apiTriggers = {};
 
   function authorize(required, success, failure) {
-    aw.log.debug('Google.authorize: Checking authorization (' + (required ? 'hard' : 'soft') + ').');
+    aw.vendor.google.Client.debug('Checking authorization (' + (required ? 'hard' : 'soft') + ').');
     gapi.auth.authorize({
         client_id: CLIENT_ID,
         scope: SCOPES,
         immediate: !required
       },
       function (authResult) {
-        aw.log.debug('Google.authorize: Returned from API.');
-        aw.log.debug(authResult);
+        aw.vendor.google.Client.debug('Returned from API.');
+        aw.vendor.google.Client.debug(authResult);
         if (authResult && !authResult.error) {
-          aw.log.debug('Google.authorize: Authorized.');
+          aw.vendor.google.Client.debug('Authorized.');
           success.call();
         } else {
-          aw.log.debug('Google.authorize: Not authorized (' + (required ? 'soft' : 'hard') + ').');
+          aw.vendor.google.Client.debug('Not authorized (' + (required ? 'soft' : 'hard') + ').');
           failure.call();
         }
       }
@@ -62,11 +61,11 @@ window.aerieWorks.require('aerieWorks.vendor.google', [
 
     var trigger = apiTriggers[api][version];
     if (trigger == null) {
-      trigger = new aw.OneTimeTrigger({
+      trigger = aw.OneTimeTrigger.create({
         name: 'aw.google.client.' + api + '.' + version,
         dependencies: [ clientTrigger ],
         hardEvaluate: function (success) {
-          aw.log.debug('Google.api: Loading "' + api + '" version "' + version + '".');
+          aw.vendor.google.Client.debug('Loading "' + api + '" version "' + version + '".');
           gapi.client.load(api, version, success);
         }
       });
@@ -78,20 +77,20 @@ window.aerieWorks.require('aerieWorks.vendor.google', [
   }
 
   function doExecute(googleRequest, successCallback, failureCallback) {
-    aw.log.debug('Google.Client.execute: Queued request started.');
+    aw.vendor.google.Client.debug('Queued request started.');
     googleRequest.execute(function (response) {
       if (response.error) {
         if (response.error.code == 401) {
           var reauthSuccess = function () { doExecute(googleRequest, successCallback, failureCallback); };
-          aw.log.info('Google.Client.execute: Authorization expired, reauthorizing.');
+          aw.vendor.google.Client.info('Authorization expired, reauthorizing.');
           authorize(false, reauthSuccess, function () {
             authorize(true, reauthSuccess, function () {
-              aw.log.error('Google.Client.execute: reauthorization failed.');
+              aw.vendor.google.Client.error('reauthorization failed.');
               failureCallback();
             });
           });
         } else {
-          aw.log.error('Google.Client.execute: request execution error: ' + response.error.message);
+          aw.vendor.google.Client.error('request execution error: ' + response.error.message);
           failureCallback();
         }
       } else {
@@ -101,7 +100,7 @@ window.aerieWorks.require('aerieWorks.vendor.google', [
   }
 
   function execute(request, callback) {
-    aw.net.getNetIoRequestQueue().enqueue({
+    aw.util.RequestQueueFactory.getNetRequestQueue().enqueue({
       method: doExecute.bind(this, request),
       success: callback
     });
@@ -127,7 +126,7 @@ window.aerieWorks.require('aerieWorks.vendor.google', [
   }
 
   function executeXhr(args) {
-    aw.net.getNetIoRequestQueue().enqueue({
+    aw.util.RequestQueueFactory.getNetRequestQueue().enqueue({
       method: doExecuteXhr.bind(this, args),
       success: args.success,
       failure: args.failure
@@ -135,14 +134,17 @@ window.aerieWorks.require('aerieWorks.vendor.google', [
   }
 
   window.aerieWorks_vendor_google_onClientLoad = function () {
-    aw.log.debug('Google: Client loaded.');
     isClientLoaded = true;
   };
 
-  aw.vendor.google.define('Client', {
-    api: getApiTrigger,
-    authorization: authorizationTrigger,
-    execute: execute,
-    executeXhr: executeXhr
+  aw.Type.create({
+    name: 'Client',
+    namespace: aw.vendor.google,
+    statics: {
+      api: getApiTrigger,
+      authorization: authorizationTrigger,
+      execute: execute,
+      executeXhr: executeXhr
+    }
   });
 });

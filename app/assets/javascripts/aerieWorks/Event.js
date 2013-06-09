@@ -4,50 +4,51 @@ window.aerieWorks.require(function (aw, $) {
     once: false
   };
 
-  function constructor() {
-    this.nextHandlerId = 1;
-    this.handlers = [];
-  }
+  aw.Type.create({
+    name: 'Event',
+    namespace: aw,
 
-  function addHandler(arg) {
-    var handler = {
-      id: this.nextHandlerId
-    };
+    initializer: function () {
+      this.nextHandlerId = 1;
+      this.handlers = [];
+    },
 
-    $.extend(handler, handlerDefaults);
-    if ($.isFunction(arg)) {
-      handler.method = arg;
-    } else {
-      $.extend(handler, arg);
-    }
+    members: {
+      addHandler: function (arg) {
+        var handler = {
+          id: this.nextHandlerId
+        };
 
-    this.nextHandlerId += 1;
-    this.handlers.push(handler);
-    return handler.id;
-  }
+        $.extend(handler, handlerDefaults);
+        if ($.isFunction(arg)) {
+          handler.method = arg;
+        } else {
+          $.extend(handler, arg);
+        }
 
-  function removeHandler(handlerId) {
-    for (var i = 0; i < this.handlers.length; i++) {
-      if (this.handlers[i].id == handlerId) {
-        this.handlers.splice(i, 1);
-        break;
+        this.nextHandlerId += 1;
+        this.handlers.push(handler);
+        return handler.id;
+      },
+
+      removeHandler: function (handlerId) {
+        for (var i = 0; i < this.handlers.length; i++) {
+          if (this.handlers[i].id == handlerId) {
+            this.handlers.splice(i, 1);
+            break;
+          }
+        }
+      },
+
+      trigger: function () {
+        for (var i = 0; i < this.handlers.length; i++) {
+          this.handlers[i].method.apply(null, arguments);
+          if (this.handlers[i].once) {
+            this.handlers.splice(i, 1);
+            i -= 1;
+          }
+        }
       }
     }
-  }
-
-  function trigger() {
-    for (var i = 0; i < this.handlers.length; i++) {
-      this.handlers[i].method.apply(null, arguments);
-      if (this.handlers[i].once) {
-        this.handlers.splice(i, 1);
-        i -= 1;
-      }
-    }
-  }
-
-  aw.define('Event', constructor, {
-    addHandler: addHandler,
-    removeHandler: removeHandler,
-    trigger: trigger
   });
 });

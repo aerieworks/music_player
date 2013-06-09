@@ -1,6 +1,5 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.vendor.google.drive', [
-    'aerieWorks.log',
     'aerieWorks.OneTimeTrigger',
     'aerieWorks.io.FileSource',
     'aerieWorks.vendor.google.Client',
@@ -10,7 +9,7 @@ window.aerieWorks.require('aerieWorks.vendor.google.drive', [
   var sourceId = null;
   driveTrigger.require();
 
-  var myTrigger = new aw.OneTimeTrigger({
+  var myTrigger = aw.OneTimeTrigger.create({
     name: 'aerieWorks.File.DriveFileSource.drive',
     dependencies: [ driveTrigger, aw.vendor.google.Client.authorization ],
     hardEvaluate: function (success) { success.call(); }
@@ -24,27 +23,31 @@ window.aerieWorks.require('aerieWorks.vendor.google.drive', [
 
       aw.vendor.google.Client.execute(request, function (result) {
         if (result.items) {
-          aw.log.debug('DriveFileSource.getList: ' + result.items.length + ' files of MIME type ' + mimeType + ' found.');
+          aw.vendor.google.drive.DriveFileSource.debug(result.items.length + ' files of MIME type ' + mimeType + ' found.');
           var files = [];
           for (var i = 0; i < result.items.length; i++) {
-            aw.log.debug('DriveFileSource.getList: found "' + result.items[i].title + '"' +
+            aw.vendor.google.drive.DriveFileSource.debug('found "' + result.items[i].title + '"' +
               '\n\tid: ' + result.items[i].id +
               '\n\tdownloadUrl: ' + result.items[i].downloadUrl +
               '\n\twebContentLink: ' + result.items[i].webContentLink +
               '\n\tfileExtension: ' + result.items[i].fileExtension);
-            files.push(new aw.vendor.google.drive.DriveFile(result.items[i]));
+            files.push(aw.vendor.google.drive.DriveFile.create(result.items[i]));
           }
 
           callback.call(null, files);
         } else {
-          aw.log.debug('DriveFileSource.getList: No files of MIME type ' + mimeType + ' found.');
+          aw.vendor.google.drive.DriveFileSource.debug('No files of MIME type ' + mimeType + ' found.');
         }
       });
     });
   }
 
-  aw.vendor.google.drive.define('DriveFileSource', {
-    getList: getList
+  aw.Type.create({
+    name: 'DriveFileSource',
+    namespace: aw.vendor.google.drive,
+    statics: {
+      getList: getList
+    }
   });
   sourceId = aw.io.FileSource.registerSource(aw.vendor.google.drive.DriveFileSource);
 });

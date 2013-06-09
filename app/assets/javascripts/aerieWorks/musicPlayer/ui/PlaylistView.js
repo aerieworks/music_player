@@ -1,9 +1,8 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
-   'aerieWorks.log',
    'aerieWorks.vendor.google.drive.DriveFileSource',
    'aerieWorks.io.LocalFile',
-   'aerieWorks.musicPlayer.file.AudioFile',
+   'aerieWorks.musicPlayer.file.AudioFileFactory',
    'aerieWorks.musicPlayer.ui.RemoteFileSelector'
   ], function (aw, $) {
   var CSS_selectedPlaylistItem = 'selectedPlaylistItem';
@@ -36,7 +35,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   // DOM event handlers
   function btnAddDriveFilesClicked(ev) {
     if (this.driveFileSelector == null) {
-      this.driveFileSelector = new aw.musicPlayer.ui.RemoteFileSelector(aw.vendor.google.drive.DriveFileSource);
+      this.driveFileSelector = aw.musicPlayer.ui.RemoteFileSelector.create(aw.vendor.google.drive.DriveFileSource);
       this.driveFileSelector.onFilesSelected.addHandler(addDriveFiles.bind(this));
     }
 
@@ -51,7 +50,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
     if (ev.target.files != null) {
       var files = [];
       for (var i = 0; i < ev.target.files.length; i++) {
-        files.push(new aw.io.LocalFile(ev.target.files[i]));
+        files.push(aw.io.LocalFile.create(ev.target.files[i]));
       }
 
       addFiles(this, files);
@@ -86,7 +85,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   }
 
   function onPlaylistItemAdded(item) {
-    aw.log.debug('aw.musicPlayer.ui.PlaylistView.onPlaylistItemAdded(): called.');
+    this.debug('Invoked.');
     var itemWrapper = $('<li class="playlistItem" />');
     var itemHandle = $('<span class="playlistItemHandle"></span>');
     var itemLabel = $('<span></span>');
@@ -105,7 +104,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   }
 
   function onPlaylistItemSelected(item) {
-    aw.log.debug('aw.musicPlayer.ui.PlaylistView.onPlaylistItemSelected(): called.');
+    this.debug('Invoked.');
     var selectedNode = $('#' + getElementIDForItem(this, item));
     selectedNode.siblings().removeClass(CSS_selectedPlaylistItem);
     selectedNode.addClass(CSS_selectedPlaylistItem);
@@ -119,7 +118,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   function addFiles(view, files) {
     for (var i = 0; i < files.length; i++) {
       if (/^audio\//.test(files[i].type)) {
-        view.playlist.addItem(aw.musicPlayer.file.AudioFile.create(files[i]));
+        view.playlist.addItem(aw.musicPlayer.file.AudioFileFactory.createFile(files[i]));
       }
     }
   }
@@ -128,5 +127,9 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
     return 'playlistItem_' + item.id;
   }
 
-  aw.musicPlayer.ui.define('PlaylistView', PlaylistView);
+  aw.Type.create({
+    name: 'PlaylistView',
+    namespace: aw.musicPlayer.ui,
+    initializer: PlaylistView
+  });
 });

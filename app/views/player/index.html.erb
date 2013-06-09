@@ -33,10 +33,10 @@ window.aerieWorks.require([
     'aerieWorks.musicPlayer.ui.PlaylistView'
   ], function (aw, $) {
     $(function() {
-    var playlist = new aw.musicPlayer.Playlist();
-    var player = new aw.musicPlayer.Player(playlist);
+    var playlist = aw.musicPlayer.Playlist.create();
+    var player = aw.musicPlayer.Player.create(playlist);
 
-    var playerView = new aw.musicPlayer.ui.PlayerView(
+    var playerView = aw.musicPlayer.ui.PlayerView.create(
       player,
       playlist,
       $('#positionTracker'),
@@ -46,7 +46,7 @@ window.aerieWorks.require([
       $('#btnNext'),
       $('#btnPlayPause'));
 
-    var playlistView = new aw.musicPlayer.ui.PlaylistView(
+    var playlistView = aw.musicPlayer.ui.PlaylistView.create(
       playlist,
       $('#playlist'),
       $('#btnAddDriveFiles'),

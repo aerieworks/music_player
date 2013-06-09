@@ -1,6 +1,5 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
-   'aerieWorks.log',
    'aerieWorks.io.ForwardReader'
   ], function (aw) {
   // The minimum byte length of an ID3 tag:
@@ -15,10 +14,6 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
   var ID3_minimumFrameLength = 11;
 
   var frameReaders;
-
-  function log(message) {
-    aw.log.debug('aw.musicPlayer.metadata.ID3v2Reader.' + message);
-  }
 
   // Constructor
   function ID3v2Reader() {
@@ -46,19 +41,8 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
     return byte & (1 << bit) > 0;
   }
 
-  function readSyncsafeInt(buffer, start) {
-    var value = 0;
-    for (var i = 0; i < 4; i++) {
-      var current = buffer[start + i];
-      if (current >= 0x80) {
-        abortRead('Invalid syncsafe integer encountered.');
-      }
-      value = (value << 7) + current;
-    }
-  }
-
   function abortRead(id3, reason) {
-    log('Aborting reading tag: ' + reason);
+    id3.debug('Aborting reading tag: ' + reason);
     throw { message: 'Aborting reading tag: ' + reason };
   }
 
@@ -68,7 +52,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
 
     // Abort if the file doesn't start with the ASCII string "ID3".
     if ('ID3' != String.fromAscii(reader.readBytes(3))) {
-      abortRead(id3, 'No tag header found.');
+      this.abortRead(id3, 'No tag header found.');
     }
 
     // Read version information.  Abort on invalid verion.
@@ -92,7 +76,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
     id3.size = reader.readSyncsafeInt();
     id3.fullSize = id3.size + (id3.hasFooter ? 20 : 10);
 
-    log('readHeader: v' + id3.version +
+    id3.debug('v' + id3.version +
       (id3.unsync ? ' unsynchronized' : '') +
       (id3.hasExtendedHeader ? ' extended_header' : '') +
       (id3.experimental ? ' experimental' : '') +
@@ -176,9 +160,9 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
         break;
       }
       readFrameHeader(id3, frame, reader);
-      log('readFrames: Reading frame "' + frame.id + '" (' + frame.size + ' bytes)');
+      id3.debug('Reading frame "' + frame.id + '" (' + frame.size + ' bytes)');
       readFrameBody(id3, frame, reader);
-      log('Frame: ' + JSON.stringify(frame));
+      id3.debug(JSON.stringify(frame));
       id3.frames[frame.id] = frame;
     }
   }
@@ -305,15 +289,15 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
     }
 
     headerView = new Uint8Array(buffer, 0, 10);
-    readHeader(this, new aw.io.ForwardReader(headerView));
+    readHeader(this, aw.io.ForwardReader.create(headerView));
 
     if (this.size > buffer.byteLength) {
-      aw.log.info('aw.musicPlayer.metadata.Id3v2Reader.read: Buffer is too small, aborting read.  Tag size: ' + this.size + '; Buffer size: ' + buffer.byteLength);
+      this.info('Buffer is too small, aborting read.  Tag size: ' + this.size + '; Buffer size: ' + buffer.byteLength);
       return false;
     }
 
     bodyView = new Uint8Array(buffer, 10, this.size);
-    bodyReader = new aw.io.ForwardReader(bodyView);
+    bodyReader = aw.io.ForwardReader.create(bodyView);
     if (this.hasExtendedHeader) {
       readExtendedHeader(this, bodyReader);
     }
@@ -334,7 +318,12 @@ window.aerieWorks.require('aerieWorks.musicPlayer.metadata', [
     }
   };
 
-  aw.musicPlayer.metadata.define('Id3v2Reader', ID3v2Reader, {
-    read: read
+  aw.Type.create({
+    name: 'Id3v2Reader',
+    namespace: aw.musicPlayer.metadata,
+    initializer: ID3v2Reader,
+    members: {
+      read: read
+    }
   });
 });

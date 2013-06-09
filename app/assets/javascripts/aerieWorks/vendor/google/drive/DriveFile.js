@@ -6,7 +6,7 @@ window.aerieWorks.require('aerieWorks.vendor.google.drive', [
   var driveTrigger = aw.vendor.google.Client.api('drive', 'v2');
   driveTrigger.require();
 
-  var myTrigger = new aw.OneTimeTrigger({
+  var myTrigger = aw.OneTimeTrigger.create({
     name: 'aerieWorks.vendor.google.drive.DriveFile',
     dependencies: [ driveTrigger, aw.vendor.google.Client.authorization ],
     hardEvaluate: function (success) { success.call(); }
@@ -46,8 +46,13 @@ window.aerieWorks.require('aerieWorks.vendor.google.drive', [
     });
   }
 
-  aw.vendor.google.drive.define('DriveFile', constructor, {
-    getUrl: getUrl,
-    read: read
+  aw.Type.create({
+    name: 'DriveFile',
+    namespace: aw.vendor.google.drive,
+    initializer: constructor,
+    members: {
+      getUrl: getUrl,
+      read: read
+    }
   });
 });
