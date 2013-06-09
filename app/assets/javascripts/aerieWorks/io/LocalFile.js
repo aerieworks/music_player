@@ -1,5 +1,6 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.io', [
+    'aerieWorks.io.FileReader',
     'aerieWorks.util.RequestQueueFactory'
   ], function (aw) {
   var urlApi = window.URL || window.webkitURL;

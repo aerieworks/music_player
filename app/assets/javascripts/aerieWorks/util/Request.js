@@ -1,5 +1,8 @@
 'use strict';
-window.aerieWorks.require('aerieWorks.util', [ 'aerieWorks.Enum' ], function (aw, $) {
+window.aerieWorks.require('aerieWorks.util', [
+    'aerieWorks.Enum',
+    'aerieWorks.Event'
+  ], function (aw, $) {
   var Priority = aw.Enum.create([
     // Requests that are loading/syncing data that is not immediately asked for, but is expected to be needed.
     'PreFetch',
