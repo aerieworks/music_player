@@ -1,6 +1,5 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.io', [
-    'aerieWorks.io.FileReader',
     'aerieWorks.util.RequestQueueFactory'
   ], function (aw) {
   var urlApi = window.URL || window.webkitURL;
@@ -25,7 +24,7 @@ window.aerieWorks.require('aerieWorks.io', [
 
   function startRead(bufferCallback, requestCallback) {
     this.debug('Starting to read ' + this.name + ' from disk.');
-    var fileReader = aw.io.FileReader.create();
+    var fileReader = new FileReader();
     fileReader.onload = fileReader_load.bind(this, bufferCallback, requestCallback);
     fileReader.readAsArrayBuffer(this.file);
   }

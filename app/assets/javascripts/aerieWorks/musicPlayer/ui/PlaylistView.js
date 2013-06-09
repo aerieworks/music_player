@@ -1,6 +1,5 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
-   'aerieWorks.vendor.google.drive.DriveFileSource',
    'aerieWorks.io.LocalFile',
    'aerieWorks.musicPlayer.file.AudioFileFactory',
    'aerieWorks.musicPlayer.ui.RemoteFileSelector'
@@ -11,15 +10,17 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   function PlaylistView(
       playlist,
       playlistNode,
-      btnAddDriveFiles,
+      btnAddRemoteFiles,
       fileSelector,
-      btnRemoveAll) {
+      btnRemoveAll,
+      remoteFileSource) {
     this.playlist = playlist;
     this.playlistNode = playlistNode;
     this.fileSelector = fileSelector;
-    this.driveFileSelector = null;
+    this.remoteFileSource = remoteFileSource;
+    this.remoteFileSelector = null;
 
-    btnAddDriveFiles.click(btnAddDriveFilesClicked.bind(this));
+    btnAddRemoteFiles.click(btnAddRemoteFilesClicked.bind(this));
     btnRemoveAll.click(btnRemoveAllClicked.bind(this));
     fileSelector.change(fileSelectorChanged.bind(this));
     playlistNode.bind('dragenter', playlistDragEnter.bind(this));
@@ -33,13 +34,13 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   }
 
   // DOM event handlers
-  function btnAddDriveFilesClicked(ev) {
-    if (this.driveFileSelector == null) {
-      this.driveFileSelector = aw.musicPlayer.ui.RemoteFileSelector.create(aw.vendor.google.drive.DriveFileSource);
-      this.driveFileSelector.onFilesSelected.addHandler(addDriveFiles.bind(this));
+  function btnAddRemoteFilesClicked(ev) {
+    if (this.remoteFileSelector == null) {
+      this.remoteFileSelector = aw.musicPlayer.ui.RemoteFileSelector.create(this.remoteFileSource);
+      this.remoteFileSelector.onFilesSelected.addHandler(addRemoteFiles.bind(this));
     }
 
-    this.driveFileSelector.show();
+    this.remoteFileSelector.show();
   }
 
   function btnRemoveAllClicked(ev) {
@@ -111,7 +112,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   }
 
   // Private methods
-  function addDriveFiles(files) {
+  function addRemoteFiles(files) {
     addFiles(this, files);
   }
 

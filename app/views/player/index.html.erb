@@ -30,9 +30,10 @@ window.aerieWorks.require([
     'aerieWorks.musicPlayer.Playlist',
     'aerieWorks.musicPlayer.Player',
     'aerieWorks.musicPlayer.ui.PlayerView',
-    'aerieWorks.musicPlayer.ui.PlaylistView'
+    'aerieWorks.musicPlayer.ui.PlaylistView',
+    'aerieWorks.vendor.google.drive.DriveFileSource'
   ], function (aw, $) {
-    $(function() {
+  $(function() {
     var playlist = aw.musicPlayer.Playlist.create();
     var player = aw.musicPlayer.Player.create(playlist);
 
@@ -51,7 +52,8 @@ window.aerieWorks.require([
       $('#playlist'),
       $('#btnAddDriveFiles'),
       $('#fileSelector'),
-      $('#btnRemoveAllFiles'));
+      $('#btnRemoveAllFiles'),
+      aw.vendor.google.drive.DriveFileSource);
   });
 });
 </script>
