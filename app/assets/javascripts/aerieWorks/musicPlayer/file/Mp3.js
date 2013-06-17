@@ -12,6 +12,8 @@ window.aerieWorks.require('aerieWorks.musicPlayer.file', [
 
     this.id3v1 = aw.musicPlayer.metadata.Id3v1Reader.create();
     this.id3v2 = aw.musicPlayer.metadata.Id3v2Reader.create();
+    this.artist = null;
+    this.album = null;
 
     file.read(4096, readTags.bind(this));
   }
@@ -70,13 +72,33 @@ window.aerieWorks.require('aerieWorks.musicPlayer.file', [
     }
   }
 
+  function getFrameOrDefault(id3v2, frame, defaultValue) {
+    if (id3v2.frames[frame] != null) {
+      return id3v2.frames[frame].value;
+    }
+
+    return defaultValue;
+  }
+
   aw.Type.create({
     name: 'Mp3',
     namespace: aw.musicPlayer.file,
     baseType: aw.musicPlayer.file.AudioFile,
     initializer: mp3,
     members: {
-      getDisplayName: getDisplayName
+      getAlbum: function () {
+        return getFrameOrDefault(this.id3v2, 'TALB', null);
+      },
+      getArtist: function () {
+        return getFrameOrDefault(this.id3v2, 'TPE1', null);
+      },
+      getDisplayName: getDisplayName,
+      getSourceFileId: function () {
+        return this.file.getId();
+      },
+      getTitle: function () {
+        return getFrameOrDefault(this.id3v2, 'TIT2', this.name);
+      }
     },
 
     onCreated: function () {

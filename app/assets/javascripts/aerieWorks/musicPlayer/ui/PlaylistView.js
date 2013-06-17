@@ -1,6 +1,7 @@
 'use strict';
 window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
    'aerieWorks.io.LocalFile',
+   'aerieWorks.musicPlayer.Library',
    'aerieWorks.musicPlayer.file.AudioFileFactory',
    'aerieWorks.musicPlayer.ui.RemoteFileSelector'
   ], function (aw, $) {
@@ -19,6 +20,7 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
     this.fileSelector = fileSelector;
     this.remoteFileSource = remoteFileSource;
     this.remoteFileSelector = null;
+    this.library = aw.musicPlayer.Library.create();
 
     btnAddRemoteFiles.click(btnAddRemoteFilesClicked.bind(this));
     btnRemoveAll.click(btnRemoveAllClicked.bind(this));
@@ -117,10 +119,17 @@ window.aerieWorks.require('aerieWorks.musicPlayer.ui', [
   }
 
   function addFiles(view, files) {
+    var audioFiles = [];
     for (var i = 0; i < files.length; i++) {
       if (/^audio\//.test(files[i].type)) {
-        view.playlist.addItem(aw.musicPlayer.file.AudioFileFactory.createFile(files[i]));
+        var file = aw.musicPlayer.file.AudioFileFactory.createFile(files[i]);
+        audioFiles.push(file);
+        view.playlist.addItem(file);
       }
+    }
+
+    if (audioFiles.length > 0) {
+      view.library.add(audioFiles);
     }
   }
 

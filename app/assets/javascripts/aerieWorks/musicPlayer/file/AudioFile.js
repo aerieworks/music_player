@@ -21,8 +21,15 @@ window.aerieWorks.require('aerieWorks.musicPlayer.file', [
     },
 
     members: {
+      getAlbum: function () { return null; },
+      getArtist: function () { return null; },
       getDisplayName: function () {
         return this.filename;
+      },
+      getSourceFileId: function () { return null; },
+      getTitle: function () { return null; },
+      getUrl: function () {
+        return this.url;
       }
     },
 
